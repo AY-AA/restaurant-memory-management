@@ -23,26 +23,34 @@ void Table::addCustomer(Customer *customer) {
 //Todo: Needs to check if erase method is working properly, memory wise.
 //Todo: if its not ok, create a new vector and copy to it. afterword clear the first one.
 void Table::removeCustomer(int id) {
-    for (int i = 0; i < customersList.size(); ++i) {
-        if(customersList.at(i)->getId() == id){
-            Customer* tmp = customersList.at(i);
-            customersList.erase(customersList.begin() + i);
-            delete(tmp);
+    if (customersList.size() > 0) {
+        for (int i = 0; i < customersList.size(); ++i) {
+            if (customersList.at(i)->getId() == id) {
+                delete (customersList.at(i));
+                customersList.erase((customersList.begin() + i));
+            }
         }
-        if(orderList.at(i).first == id){
-            orderList.back().first;
-            orderList.back().second;
-            orderList.pop_back();
+    }
+    if(orderList.size() > 0) {
+        for (int j = 0; j < orderList.size(); ++j) {
+            if (orderList.at(j).first == id) {
+                orderList.back().first;
+                orderList.back().second;
+                orderList.pop_back();
+            }
         }
     }
 };
 
 Customer *Table::getCustomer(int id) {
-    for (int i = 0; i < customersList.size(); ++i) {
-        if(customersList.at(i)->getId() == id){
-            return customersList.at(i);
+    if (customersList.size() > 0) {
+        for (int i = 0; i < customersList.size(); ++i) {
+            if (customersList.at(i)->getId() == id) {
+                return customersList.at(i);
+            }
         }
     }
+    return nullptr;
 };
 
 std::vector<Customer *> &Table::getCustomers() {
