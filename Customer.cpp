@@ -22,28 +22,44 @@ int Customer::getId() const
 
 VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id)
 {
-    _canOrder = true;
+    _ordered = false;
 };
+
 std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //orders the smallest id and most expensive beverage (non-alcoholic)
 {
     std::vector<int> ans;
-    int lowestID = -1;
+    int dishID = -1;
     int bvgPrice = -1;
-    for (int i = 0; i < menu.size(); ++i) {
-        if (menu.at(i).getType() == DishType::VEG && (lowestID > menu.at(i).getId() || lowestID == -1))
-        {
-            lowestID = menu.at(i).getId();
+
+    // finding dish
+    if (!_ordered) {
+        for (int i = 0; !_ordered && i < menu.size(); ++i) {
+            if (menu.at(i).getType() == DishType::VEG && (dishID > menu.at(i).getId() || dishID == -1)) {
+                dishID = menu.at(i).getId();
+            }
         }
-        if (menu.at(i).getType() == DishType::VEG && (bvgPrice < menu.at(i).getPrice() || bvgPrice == -1))
+        if (dishID != -1)
         {
-            bvgPrice = menu.at(i).getPrice();
+            ans.push_back(dishID);
+            _ordered = true;
         }
     }
-    ans.push_back(lowestID);
-    ans.push_back(bvgPrice);
 
+    // finding beverage
+    else {
+        for (int i = 0; i < menu.size(); ++i) {
+            if (menu.at(i).getType() == DishType::VEG && (bvgPrice < menu.at(i).getPrice() || dishID == -1))
+            {
+                bvgPrice = menu.at(i).getPrice();
+                dishID = menu.at(i).getId();
+            }
+        }
+        if (bvgPrice != -1)
+            ans.push_back(dishID);
+    }
     return ans;
 };
+
 std::string VegetarianCustomer::toString() const
 {
     std::string ans;
@@ -57,22 +73,28 @@ std::string VegetarianCustomer::toString() const
 
 CheapCustomer::CheapCustomer(std::string name, int id) : Customer(name,id)
 {
-    _ordered = true;
+    _ordered = false;
 };
-std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders cheapest dish, and once.
+
+std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders cheapest dish, only once.
 {
     std::vector<int> ans;
-    if (!_ordered)
+    if (_ordered)
         return ans;
-    int cheapest = -1;
+    int cheapestID = -1;
+    int price = -1;
     for (int i = 0; i < menu.size(); ++i) {
-        if (cheapest > menu.at(i).getPrice() || cheapest == -1)
-            cheapest = menu.at(i).getId();
+        if (price > menu.at(i).getPrice() || cheapestID == -1)
+        {
+            price = menu.at(i).getPrice();
+            cheapestID = menu.at(i).getId();
+        }
     }
-    ans.push_back(cheapest);
+    ans.push_back(cheapestID);
     _ordered = false;
     return ans;
 };
+
 std::string CheapCustomer::toString() const
 {
     std::string ans;
@@ -86,29 +108,45 @@ std::string CheapCustomer::toString() const
 
 SpicyCustomer::SpicyCustomer(std::string name, int id) : Customer(name,id)
 {
-    _ordered = true;
+    _ordered = false;
 };
+
 std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu)    //orders the most expensive spicy dish, and then cheapest non-alcoholic beverage
 {
     std::vector<int> ans;
-    int spicy = -1;
-    if (_ordered) {
+    int orderID = -1;
+    int price = -1;
+
+    //orders dish
+    if (!_ordered) {
         for (int i = 0; i < menu.size(); ++i) {
-            if (menu.at(i).getType() == DishType::SPC && (spicy < menu.at(i).getPrice() || spicy == -1))
-                spicy = menu.at(i).getId();
+            if (menu.at(i).getType() == DishType::SPC && (price < menu.at(i).getPrice() || orderID == -1))
+            {
+                price = menu.at(i).getPrice();
+                orderID = menu.at(i).getId();
+            }
+
         }
-        _ordered = false;
+        _ordered = true;
     }
+
+    //orders beverage
     else
     {
         for (int i = 0; i < menu.size(); ++i) {
-            if (menu.at(i).getType() == DishType::BVG && (spicy > menu.at(i).getPrice() || spicy == -1))
-                spicy = menu.at(i).getId();
+            if (menu.at(i).getType() == DishType::BVG && (price > menu.at(i).getPrice() || orderID == -1))
+            {
+                int orderID = menu.at(i).getId();
+                int price = menu.at(i).getPrice();
+            }
+
+
         }
     }
-    ans.push_back(spicy);
+    ans.push_back(orderID);
     return ans;
 };
+
 std::string SpicyCustomer::toString() const
 {
     std::string ans;
@@ -118,20 +156,46 @@ std::string SpicyCustomer::toString() const
 
 
 
-// Alchoholic Customer
+// Alcoholic Customer
 
 
 AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id)
 {
     _ordered = true;
+    _canOrder = true;
+    _alcPrice = -1;
 };
-
-//TODO : figure out how to implement the repeats of orders
 
 std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //orders cheapest alcoholic beverage and then next expensive till there are no more
 {
+    std::vector<int> ans;
+    int orderID = -1;
+    int orderPrice = -1;
+    //orders dish
+    if (!_ordered) {
+        for (int i = 0; i < menu.size(); ++i) {
+            Dish currDish = menu.at(i);
+            if (currDish.getType() == DishType::ALC && (orderPrice > currDish.getPrice() || orderID == -1))
+            {
+                orderID = currDish.getId();
+                orderPrice = currDish.getPrice();
+            }
+        }
+        _ordered = true;
+        ans.push_back(orderID);
+    }
 
+        //orders beverage
+    else if (_canOrder)
+    {
+        orderID = findNextAlcoholicIndex(menu);
+        if (orderID == -1)
+            _canOrder = false;
+        ans.push_back(orderID);
+    }
+    return ans;
 };
+
 std::string AlchoholicCustomer::toString() const
 {
     std::string ans;
@@ -139,5 +203,30 @@ std::string AlchoholicCustomer::toString() const
     return ans;
 };
 
+int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
+{
+    int index = -1;
+    int nextPrice = _alcPrice;
+    bool found = false;
+    for (int i = 0; i < menu.size(); ++i)
+    {
+        int currID = menu.at(i).getId();
+        int currPrice = menu.at(i).getPrice();
+        if (menu.at(i).getType() == DishType::ALC)
+        {
+            if (!found && nextPrice < currPrice)
+            {
+                index = currID;
+                nextPrice = currPrice;
+                found = true;
+            }
+            else if (found && nextPrice < currPrice && currPrice < _alcPrice)
+            {
+                index = currID;
+            }
+        }
+    }
+    return index;
+};
 
 

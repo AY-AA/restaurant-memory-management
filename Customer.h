@@ -16,10 +16,6 @@ private:
     const std::string name;
     const int id;
 
-
-    // TODO : check if it's ok to add the bool
-protected:
-    bool _ordered;
 };
 
 
@@ -28,7 +24,9 @@ public:
     VegetarianCustomer(std::string name, int id);
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+
 private:
+    bool _ordered;
 };
 
 
@@ -37,7 +35,9 @@ public:
     CheapCustomer(std::string name, int id);
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+
 private:
+    bool _ordered;
 };
 
 
@@ -46,7 +46,9 @@ public:
     SpicyCustomer(std::string name, int id);
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+
 private:
+    bool _ordered;
 };
 
 
@@ -55,7 +57,13 @@ public:
     AlchoholicCustomer(std::string name, int id);
     std::vector<int> order(const std::vector<Dish> &menu);
     std::string toString() const;
+
 private:
+    bool _ordered;
+    bool _canOrder;
+    int _alcPrice;
+
+    int findNextAlcoholicIndex(const std::vector<Dish> &menu);
 };
 
 
