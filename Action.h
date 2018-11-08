@@ -46,6 +46,9 @@ public:
     std::string toString() const;
 private:
     const int tableId;
+
+    std::string findCustomerName(int id, Restaurant &restaurant);
+
 };
 
 
