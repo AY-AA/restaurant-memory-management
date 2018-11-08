@@ -15,6 +15,11 @@ public:
 private:
     const std::string name;
     const int id;
+
+
+    // TODO : check if it's ok to add the bool
+protected:
+    bool _ordered;
 };
 
 
