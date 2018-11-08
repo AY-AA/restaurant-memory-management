@@ -20,6 +20,7 @@ int Customer::getId() const
 Customer::~Customer() = default;
 
 
+
 // Vegetarian Customer
 
 VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id)
@@ -69,7 +70,7 @@ std::string VegetarianCustomer::toString() const
     return ans;
 };
 
-VegetarianCustomer::~VegetarianCustomer() = default;
+VegetarianCustomer::~VegetarianCustomer() = default ;
 
 
 // Cheap Customer
@@ -106,7 +107,6 @@ std::string CheapCustomer::toString() const
 }
 
 CheapCustomer::~CheapCustomer() = default;
-
 
 
 // Spicy Customer
@@ -160,6 +160,7 @@ std::string SpicyCustomer::toString() const
 };
 
 SpicyCustomer::~SpicyCustomer() = default;
+
 
 
 // Alcoholic Customer

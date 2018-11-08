@@ -12,6 +12,27 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 
 
+    Customer* x = new VegetarianCustomer("Alex",1);
+    Customer* y = new VegetarianCustomer("Avishai",2);
+    Customer* z = new VegetarianCustomer("Shaked",3);
+
+//    std::vector<Dish> menu;
+
+//    Table* table = new Table(3);
+//
+//    table->addCustomer(x);
+//    table->addCustomer(y);
+//    table->addCustomer(z);
+//
+//    table->removeCustomer(1);
+//    table->removeCustomer(3);
+
+    delete x;
+
+//    std::cout << table->getCustomer(1)->getName();
+    std::cout << x->getId() ;
+
+//=======
 //    Customer* alex = new VegetarianCustomer("Alex",5);
 //    Customer* avishai = new SpicyCustomer("Avishai",13);
 //    Customer* shaked = new CheapCustomer("Shaked",12);
@@ -19,16 +40,12 @@ int main() {
 //    t1->addCustomer(alex);
 //    t1->addCustomer(avishai);
 //    t1->addCustomer(shaked);
-//  t1->removeCustomer(13);
-//    delete avishai;
-//    avishai = nullptr;
+//    t1->removeCustomer(13);
 //    cout<< avishai->getName() <<endl;
 //    //t1->getCustomers();
 //    std::vector<Dish> menu;
+//
 //    Customer*& y = x;
-
-//
-//
 //
 //    VegetarianCustomer z("ASD",1);
 //    VegetarianCustomer &t = z;
