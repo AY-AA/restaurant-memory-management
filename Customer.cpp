@@ -68,6 +68,10 @@ std::string VegetarianCustomer::toString() const
     return ans;
 };
 
+VegetarianCustomer::~VegetarianCustomer()
+{
+    std:: cout << "ASDASDAS";
+}
 
 
 // Cheap Customer

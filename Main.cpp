@@ -12,13 +12,23 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 
 
-    Customer* x = new VegetarianCustomer("Alex",5);
-    cout << x->toString();
-//    std::vector<Dish> menu;
-//
+    Customer* x = new VegetarianCustomer("Alex",1);
+    Customer* y = new VegetarianCustomer("Avishai",2);
+    Customer* z = new VegetarianCustomer("Shaked",3);
+    std::vector<Dish> menu;
+
+    Table* table = new Table(3);
+
+    table->addCustomer(x);
+    table->addCustomer(y);
+    table->addCustomer(z);
+
+    table->removeCustomer(1);
+    table->removeCustomer(3);
+
+
+
 //    Customer*& y = x;
-//
-//
 //
 //    VegetarianCustomer z("ASD",1);
 //    VegetarianCustomer &t = z;
