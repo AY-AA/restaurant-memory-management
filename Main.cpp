@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Restaurant* backup = nullptr;
+//Restaurant* backup = nullptr;
 
 int main() {
 //        //VAR
