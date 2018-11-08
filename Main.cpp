@@ -1,32 +1,48 @@
 #include "Restaurant.h"
 #include <iostream>
-#include <fstream>
 #include "Table.cpp"
+#include "vector"
+#include "Dish.h"
 
 using namespace std;
 
 //Restaurant* backup = nullptr;
 
 int main() {
-//        //VAR
-//        string lineBuf;
-//        string optionBuf;
-//        std::ifstream confFile("config.txt");
+    std::cout << "Hello, World!" << std::endl;
+
+
+    Customer* x = new VegetarianCustomer("Alex",5);
+    cout << x->toString();
+//    std::vector<Dish> menu;
 //
-//        if (confFile.is_open()) {
-//            while (getline(confFile, lineBuf)) {
-//                optionBuf = "Screen Width : ";
-//                if (((int) lineBuf.find(optionBuf)) != -1) {
-//                    lineBuf.erase(0, optionBuf.length());
-//                    //SCREEN_WIDTH = atoi(lineBuf.c_str());
-//                }
+//    Customer*& y = x;
 //
-//                confFile.close();
-//                return true;
-//            }
-//            return false;
-//        }
-return 0;
+//
+//
+//    VegetarianCustomer z("ASD",1);
+//    VegetarianCustomer &t = z;
+//
+//
+//    menu.push_back(Dish(0,"Fish",50,DishType::VEG));
+//
+//    std::vector<int> ASD (x->order(menu));
+
+//    std::vector<Dish*> A;
+//    for (int i = 0; i < 10; ++i) {
+//        A.push_back(new Dish(i,"A",i*10,DishType::VEG));
+//    }
+//    cout << A.size();
+//    for (int i = 0; i < A.size(); ++i) {
+//        cout << A.at(i)->getId() << endl;
+//    }
+//    A.erase(A.begin() + 4);
+//    for (int i = 0; i < A.size(); ++i) {
+//        cout << A.at(i)->getId() << endl;
+//    }
+//    cout << A.size();
+    return 0;
+
 }
 
 
