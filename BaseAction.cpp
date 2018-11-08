@@ -9,6 +9,7 @@
 #include "Restaurant.h"
 #include "Dish.h"
 
+BaseAction::BaseAction() {};
 
 ActionStatus BaseAction::getStatus() const
 {
@@ -52,6 +53,11 @@ std::string OpenTable::toString() const{
     //Todo: Implement!
 }
 
+
+
+
+//Order
+
 Order::Order(int id) : tableId(id) {};
 
 
@@ -59,7 +65,7 @@ Order::Order(int id) : tableId(id) {};
 void Order::act(Restaurant &restaurant)
 {
     Table *tmpTable = restaurant.getTable(tableId);
-    if (tmpTable->isOpen())
+    if (tmpTable != nullptr)
     {
         tmpTable->order(restaurant.getMenu());
         std::vector<OrderPair> orders = tmpTable->getOrders();
