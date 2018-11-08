@@ -1,5 +1,6 @@
 #include "Restaurant.h"
 #include <iostream>
+#include <fstream>
 #include "Table.cpp"
 
 using namespace std;
@@ -7,15 +8,27 @@ using namespace std;
 Restaurant* backup = nullptr;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
-    Table* x = new Table(10);
-
-    x->getBill();
-
-    return 0;
-
+//        //VAR
+//        string lineBuf;
+//        string optionBuf;
+//        std::ifstream confFile("config.txt");
+//
+//        if (confFile.is_open()) {
+//            while (getline(confFile, lineBuf)) {
+//                optionBuf = "Screen Width : ";
+//                if (((int) lineBuf.find(optionBuf)) != -1) {
+//                    lineBuf.erase(0, optionBuf.length());
+//                    //SCREEN_WIDTH = atoi(lineBuf.c_str());
+//                }
+//
+//                confFile.close();
+//                return true;
+//            }
+//            return false;
+//        }
+return 0;
 }
+
 
 
 
