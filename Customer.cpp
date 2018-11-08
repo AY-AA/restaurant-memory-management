@@ -17,6 +17,8 @@ int Customer::getId() const
     return id;
 };
 
+Customer::~Customer() = default;
+
 
 
 // Vegetarian Customer
@@ -68,10 +70,7 @@ std::string VegetarianCustomer::toString() const
     return ans;
 };
 
-VegetarianCustomer::~VegetarianCustomer()
-{
-    std:: cout << "ASDASDAS";
-}
+VegetarianCustomer::~VegetarianCustomer() = default ;
 
 
 // Cheap Customer
@@ -107,6 +106,7 @@ std::string CheapCustomer::toString() const
     return ans;
 }
 
+CheapCustomer::~CheapCustomer() = default;
 
 
 // Spicy Customer
@@ -158,6 +158,8 @@ std::string SpicyCustomer::toString() const
     ans.append(std::to_string(this->getId()) + " " + this->getName() + "," + "SPC");
     return ans;
 };
+
+SpicyCustomer::~SpicyCustomer() = default;
 
 
 
@@ -234,4 +236,5 @@ int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
     return index;
 };
 
+AlchoholicCustomer::~AlchoholicCustomer() = default;
 
