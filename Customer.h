@@ -12,6 +12,8 @@ public:
     virtual std::string toString() const = 0;
     std::string getName() const;
     int getId() const;
+    virtual ~Customer();
+
 private:
     const std::string name;
     const int id;

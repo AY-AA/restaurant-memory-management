@@ -25,8 +25,9 @@ void Table::addCustomer(Customer *customer) {
 void Table::removeCustomer(int id) {
     if (customersList.size() > 0) {
         for (int i = 0; i < customersList.size(); ++i) {
-            if (customersList.at(i)->getId() == id) {
+            if (customersList.at(i)->getId() == id){
                 delete (customersList.at(i));
+                customersList.at(i) = nullptr;
                 customersList.erase((customersList.begin() + i));
             }
         }

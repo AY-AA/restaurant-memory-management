@@ -17,7 +17,7 @@ int Customer::getId() const
     return id;
 };
 
-
+Customer::~Customer(){};
 
 // Vegetarian Customer
 

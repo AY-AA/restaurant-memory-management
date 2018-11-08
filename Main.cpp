@@ -12,19 +12,21 @@ int main() {
     std::cout << "Hello, World!" << std::endl;
 
 
-    Customer* alex = new VegetarianCustomer("Alex",5);
-    Customer* avishai = new SpicyCustomer("Avishai",13);
-    Customer* shaked = new CheapCustomer("Shaked",12);
-    Table* t1 = new Table(3);
-    t1->addCustomer(alex);
-    t1->addCustomer(avishai);
-    t1->addCustomer(shaked);
-    t1->removeCustomer(13);
-    cout<< avishai->getName() <<endl;
-    //t1->getCustomers();
+//    Customer* alex = new VegetarianCustomer("Alex",5);
+//    Customer* avishai = new SpicyCustomer("Avishai",13);
+//    Customer* shaked = new CheapCustomer("Shaked",12);
+//    Table* t1 = new Table(3);
+//    t1->addCustomer(alex);
+//    t1->addCustomer(avishai);
+//    t1->addCustomer(shaked);
+//  t1->removeCustomer(13);
+//    delete avishai;
+//    avishai = nullptr;
+//    cout<< avishai->getName() <<endl;
+//    //t1->getCustomers();
 //    std::vector<Dish> menu;
-//
 //    Customer*& y = x;
+
 //
 //
 //
