@@ -14,7 +14,7 @@ class Restaurant;
 
 class BaseAction{
 public:
-    BaseAction()
+    BaseAction();
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;
