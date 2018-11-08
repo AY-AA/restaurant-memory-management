@@ -10,6 +10,7 @@
 
 Table::Table(int t_capacity) {
     capacity = t_capacity;
+    open = false;
 };
 
 int Table::getCapacity() const {
@@ -61,6 +62,8 @@ std::vector<OrderPair> &Table::getOrders() {
     return orderList;
 };
 
+
+//TODO : save the orders
 void Table::order(const std::vector<Dish> &menu) {
     for (int i = 0; i < customersList.size(); ++i) {
         customersList.at(i)->order(menu);
