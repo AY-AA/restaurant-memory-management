@@ -18,7 +18,13 @@ int Table::getCapacity() const {
 };
 
 void Table::addCustomer(Customer *customer) {
-    customersList.push_back(customer);
+    if(customersList.size() < capacity) {
+        customersList.push_back(customer);
+    }
+    else if(customersList.size() == capacity){
+        open = false;
+    }
+    else return;
 };
 
 //Todo: Needs to check if erase method is working properly, memory wise.
@@ -77,7 +83,7 @@ void Table::openTable(){
 
 //Todo: Needs to check if erase method is working properly, memory wise.
 void Table::closeTable() {
-    open = false;
+    open = true;
     for (int i = 0; i < customersList.size(); ++i) {
         delete customersList.at(i);
     }
@@ -87,8 +93,10 @@ void Table::closeTable() {
 
 int Table::getBill() {
     int billSum = 0;
-    for (int i = 0; i < orderList.size(); i++) {
-        billSum += orderList.at(i).second.getPrice();
+    if (orderList.size() > 0) {
+        for (int i = 0; i < orderList.size(); i++) {
+            billSum += orderList.at(i).second.getPrice();
+        }
     }
     return billSum;
 };

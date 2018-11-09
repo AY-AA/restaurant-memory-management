@@ -11,10 +11,11 @@ using namespace std;
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
-
     Customer* x = new VegetarianCustomer("Alex",1);
     Customer* y = new VegetarianCustomer("Avishai",2);
     Customer* z = new VegetarianCustomer("Shaked",3);
+    std::cout  << x->getName() << "\n" << y->getId() << "\n";
+    std::cout<<"banana";
 
 //    std::vector<Dish> menu;
 

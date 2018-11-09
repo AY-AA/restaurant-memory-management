@@ -34,6 +34,9 @@ std::string BaseAction::getErrorMsg() const
     return NULL;
 };
 
+
+//OpenTable
+
 OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id),customers(customersList) {};
 
 void OpenTable::act(Restaurant &restaurant){
@@ -43,14 +46,16 @@ void OpenTable::act(Restaurant &restaurant){
         for (int i = 0; i < customers.size(); ++i) {
             tableToOpen->addCustomer(customers.at(i));
         }
+        complete();
     }
     else{
-        std::cout<< "Table does not exist or is already open";
+        (*this).error("Table does not exist or is already open");
+        std::cout<< getErrorMsg();
     }
 }
 
 std::string OpenTable::toString() const{
-    //Todo: Implement!
+    //Todo implement!
 }
 
 
@@ -59,7 +64,6 @@ std::string OpenTable::toString() const{
 //Order
 
 Order::Order(int id) : tableId(id) {};
-
 
 //TODO :  check if customer is being deleted from restaurant's table's vector
 void Order::act(Restaurant &restaurant)
@@ -80,8 +84,8 @@ void Order::act(Restaurant &restaurant)
     else
     {
         this->error("Table does not exist or is not open");
+        std::cout << getErrorMsg();
     }
-
 };
 
 
@@ -90,6 +94,9 @@ std::string Order::toString() const
 {
     return std::string ("");
 };
+
+
+//MoveCustomer
 
 MoveCustomer::MoveCustomer(int src, int dst, int customerId) : srcTable(src), dstTable(dst), id(customerId) {};
 
@@ -102,11 +109,134 @@ void MoveCustomer::act(Restaurant &restaurant) {
         dstT->addCustomer(c);
     }
     else{
-        std::cout<< "Cannot move customer";
+        (*this).error("Cannot move customer");
+        std::cout << getErrorMsg();
     }
 };
-
 
 std::string MoveCustomer::toString() const{
     //Todo: Implement!
 }
+
+
+//Close
+
+Close::Close(int id):tableId(id) {};
+
+void Close::act(Restaurant &restaurant) {
+    Table* tableToClose = restaurant.getTable(tableId);
+    if(tableToClose != nullptr && tableToClose->isOpen()){
+        std::cout << toString() + std::to_string(tableToClose->getBill()) + "\n";
+        tableToClose->closeTable();
+    }
+    else{
+        error("Table does not exist or is not open");
+        std::cout<< getErrorMsg();
+    }
+};
+
+std::string Close::toString() const{
+   std::string str = "Table " + std::to_string(tableId) + "was closed. " + "Bill";
+   return str;
+};
+
+
+//CloseAll
+
+CloseAll::CloseAll() {};
+
+void CloseAll::act(Restaurant &restaurant) {
+    int restCapacity = restaurant.getNumOfTables();
+    if(restCapacity > 0) {
+        for (int i = 0; i < restCapacity; ++i) {
+            restaurant.getTable(i)->closeTable();
+        }
+    }
+    else{
+        //Todo: need to close restaurant. bool open = false.
+    }
+};
+
+
+//PrintMenu
+
+PrintMenu::PrintMenu() {};
+
+void PrintMenu::act(Restaurant &restaurant) {
+    std::vector<Dish> menu = restaurant.getMenu();
+    for (int i = 0; i < menu.size(); ++i) {
+        std::cout  << menu.at(i).getName() << " " << menu.at(i).getType() << " " << menu.at(i).getPrice() << "\n";
+    }
+};
+
+std::string PrintMenu::toString() const {
+    return ""; //Todo:check why this method is necessary.
+};
+
+
+//PrintTableStatus
+
+PrintTableStatus::PrintTableStatus(int id): tableId(id) {};
+
+void PrintTableStatus::act(Restaurant &restaurant) {
+    Table* tableToPrint = restaurant.getTable(tableId);
+    if(tableToPrint == nullptr){
+        return;
+    }
+    if(!tableToPrint->isOpen()){
+        std::cout << "Table " << tableId << "status: " << "closed";
+    }
+    else{
+        std::vector<Customer *>& tmpCust = tableToPrint->getCustomers();
+        std::vector<OrderPair>& tmpOrds = tableToPrint->getOrders();
+        std::cout << "Table " << tableId << "status: " << "open" << "\n";
+        std::cout << "Customers:" << "\n";
+        for (int i = 0; i < tmpCust.size(); ++i) {
+            std::cout << tmpCust.at(i)->getId() << tmpCust.at(i)->getName() << "\n";
+        }
+        std::cout << "Orders:" << "\n";
+        for (int i = 0; i < tmpCust.size(); ++i) {
+            std::cout << tmpOrds.at(i).second.getName() << " " << tmpOrds.at(i).second.getPrice() << "NIS" << " " <<tmpOrds.at(i).first;
+        }
+    }
+};
+
+
+//PrintActionsLog
+
+PrintActionsLog::PrintActionsLog() {};
+
+void PrintActionsLog::act(Restaurant &restaurant) {
+    std::vector<BaseAction*> actsLog = restaurant.getActionsLog();
+    for (int i = 0; i < actsLog.size(); ++i) {
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
