@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
-#include "Dish.cpp"
-#include "Customer.h"
+#include "../include/Dish.h"
+#include "../include/Customer.h"
 
 
 
@@ -17,7 +17,6 @@ int Customer::getId() const
     return id;
 };
 
-Customer::~Customer() = default;
 
 
 
@@ -70,7 +69,6 @@ std::string VegetarianCustomer::toString() const
     return ans;
 };
 
-VegetarianCustomer::~VegetarianCustomer() = default ;
 
 
 // Cheap Customer
@@ -106,7 +104,6 @@ std::string CheapCustomer::toString() const
     return ans;
 }
 
-CheapCustomer::~CheapCustomer() = default;
 
 
 // Spicy Customer
@@ -159,7 +156,6 @@ std::string SpicyCustomer::toString() const
     return ans;
 };
 
-SpicyCustomer::~SpicyCustomer() = default;
 
 
 
@@ -227,14 +223,15 @@ int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
                 nextPrice = currPrice;
                 found = true;
             }
-            else if (found && nextPrice < currPrice && currPrice < _alcPrice)
+            else if (found && nextPrice > currPrice && currPrice > _alcPrice)
             {
                 index = currID;
+                nextPrice = currPrice;
             }
         }
     }
+    _alcPrice = nextPrice;
     return index;
 };
 
-AlchoholicCustomer::~AlchoholicCustomer() = default;
 

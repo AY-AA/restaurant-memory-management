@@ -23,6 +23,13 @@ private:
     std::vector<Table*> tables;
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;
+
+
+    void readFile(const std::string &configFilePath);
+    int parseLine(const std::string &currLine, int caseNumber);
+    DishType parseDishType(const std::string&);
+    void insertNewDish(const std::string&);
+
 };
 
 #endif
