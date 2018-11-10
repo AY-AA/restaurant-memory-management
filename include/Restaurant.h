@@ -25,7 +25,7 @@ private:
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;
 
-
+    const std::vector<std::string>& parseInput(std::string& str);
     void readFile(const std::string &configFilePath);
     int parseLine(const std::string &currLine, int caseNumber);
     DishType parseDishType(const std::string&);
