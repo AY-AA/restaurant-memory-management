@@ -11,13 +11,21 @@ Restaurant* backup = nullptr;
 
 
 int main(int argc, char** argv){
+
+//    std::string A ("order 2");
+//    A.substr(2);
+//    A.erase(0,6);
+//
+//    cout << A;
+
+
     string configurationFile = "../config.txt";
     Restaurant rest(configurationFile);
         rest.start();
 
 
     // ------ TEST 1 ----------
-
+//
 //    Customer* x = new VegetarianCustomer("Alex",10);
 //    Customer* y = new VegetarianCustomer("Avishai",1);
 //    Customer* z = new VegetarianCustomer("Shaked",2);
