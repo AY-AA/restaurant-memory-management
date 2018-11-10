@@ -22,15 +22,12 @@ void Restaurant::start()
     do{
         std::string userChoice;
         std::getline(std::cin, userChoice);
-//        std::cin >> userChoice;
-        std::string firstWord = userChoice.substr(0, userChoice.find(' '));
+        std::string firstWord = userChoice.substr(0, userChoice.find(" "));
         std::vector<std::string> tableInstructions = parseInput(userChoice);
+        std::vector<Customer *> customersToAdd;
 
         if (firstWord == "open") {
-            //std::vector<std::string> customersToAdd;
             int tableId = std::stoi(tableInstructions.at(1));
-            Table *tableToOpen = tables.at(tableId);
-            tableToOpen->openTable();
             std::string name;
             std::string type;
             for (int i = 2; i < tableInstructions.size() - 1; i++) {
@@ -38,22 +35,25 @@ void Restaurant::start()
                 type = tableInstructions.at(i + 1);
                 if (type == "veg") {
                     Customer *toAdd = new VegetarianCustomer(name, nextId);
-                    tableToOpen->addCustomer(toAdd);
+                    customersToAdd.push_back(toAdd);
                     nextId++;
                 } else if (type == "spc") {
                     Customer *toAdd = new SpicyCustomer(name, nextId);
-                    tableToOpen->addCustomer(toAdd);
+                    customersToAdd.push_back(toAdd);
                     nextId++;
                 } else if (type == "chp") {
                     Customer *toAdd = new CheapCustomer(name, nextId);
-                    tableToOpen->addCustomer(toAdd);
+                    customersToAdd.push_back(toAdd);
                     nextId++;
                 } else { //alc
                     Customer *toAdd = new AlchoholicCustomer(name, nextId);
-                    tableToOpen->addCustomer(toAdd);
+                    customersToAdd.push_back(toAdd);
                     nextId++;
                 }
             }
+            OpenTable* op = new OpenTable(tableId, customersToAdd);
+            op->act(*this);
+            delete(op);
         }
         else if(firstWord == "order"){
             std::string::size_type sz;
@@ -95,11 +95,11 @@ void Restaurant::start()
     const std::vector<std::string>& Restaurant::parseInput(std::string &str) {
         std::vector<std::string> v;
         int i = 0;
-        while(!str.empty()) {
-            if(str.at(i) == ' '){
-                std::string sub = str.substr(0,str.find(' '));
+        while(i < str.length()) {
+            if(str.at(i) == *" "){
+                std::string sub = str.substr(0, i);
                 v.push_back(sub);
-                str.erase(0,str.find(' ') + 1);
+                str.erase(0,i + 1);
                 i = 0;
             }
             i++;
