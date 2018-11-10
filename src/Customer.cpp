@@ -19,7 +19,6 @@ int Customer::getId() const
 
 
 
-
 // Vegetarian Customer
 
 VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id)
@@ -65,7 +64,7 @@ std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //or
 std::string VegetarianCustomer::toString() const
 {
     std::string ans;
-    ans.append(std::to_string(this->getId()) + " " + this->getName() + "," + "VEG");
+    ans.append(getName() + "," + "veg");
     return ans;
 };
 
@@ -100,7 +99,7 @@ std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders
 std::string CheapCustomer::toString() const
 {
     std::string ans;
-    ans.append(std::to_string(this->getId()) + " " + this->getName() + "," + "CHP");
+    ans.append(getName() + "," + "chp");
     return ans;
 }
 
@@ -152,7 +151,7 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu)    //orders
 std::string SpicyCustomer::toString() const
 {
     std::string ans;
-    ans.append(std::to_string(this->getId()) + " " + this->getName() + "," + "SPC");
+    ans.append(getName() + "," + "spc");
     return ans;
 };
 
@@ -202,7 +201,7 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //or
 std::string AlchoholicCustomer::toString() const
 {
     std::string ans;
-    ans.append(std::to_string(this->getId()) + " " + this->getName() + "," + "ALC");
+    ans.append(getName() + "," + "alc");
     return ans;
 };
 

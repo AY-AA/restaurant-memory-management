@@ -25,7 +25,9 @@ int Restaurant::getNumOfTables() const
 };
 
 Table* Restaurant::getTable(int ind){
-
+    if (ind > tables.size())
+        return nullptr;
+    return tables.at(ind);
 
 };
 
@@ -144,4 +146,12 @@ void Restaurant::insertNewDish(const std::string& currLine)
     }
 
     menu.push_back(Dish(dishId,dishName,dishPrice,dishType));
+};
+
+
+Restaurant::~Restaurant()
+{
+    for (int i = 0; i <tables.size() ; ++i) {
+        delete tables.at(i);
+    }
 };

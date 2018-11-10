@@ -67,7 +67,12 @@ std::vector<OrderPair> &Table::getOrders() {
 //TODO : save the orders
 void Table::order(const std::vector<Dish> &menu) {
     for (int i = 0; i < customersList.size(); ++i) {
-        customersList.at(i)->order(menu);
+        Customer* currCustomer = customersList.at(i);
+        std::vector<int> orders = currCustomer->order(menu);
+        for (int j = 0; j < orders.size(); ++j) {
+            OrderPair x(currCustomer->getId(), menu.at(orders.at(j)));
+            orderList.push_back(x);
+        }
     }
 };
 
