@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include "Customer.cpp"
+#include "../include/Customer.h"
 #include <vector>
-#include "Table.h"
+#include "../include/Table.h"
 
 
 Table::Table(int t_capacity) {
