@@ -349,6 +349,7 @@ BackupRestaurant::BackupRestaurant() = default;
 
 void BackupRestaurant::act(Restaurant &restaurant)
 {
+    Restaurant * newRestaurant = &restaurant;
 
 };
 
@@ -374,6 +375,12 @@ RestoreResturant::RestoreResturant() = default;
 
 void RestoreResturant::act(Restaurant &restaurant)
 {
+    if (&restaurant == nullptr)
+    {
+        error("No backup available");
+        std::cout << getErrorMsg() << std::endl;
+        return;
+    }
 
 };
 
