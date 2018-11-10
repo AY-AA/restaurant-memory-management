@@ -47,7 +47,6 @@ public:
 private:
     const int tableId;
 
-    std::string findCustomerName(int id, Restaurant &restaurant);
 
 };
 

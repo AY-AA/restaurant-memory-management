@@ -18,19 +18,13 @@ int Table::getCapacity() const {
 };
 
 void Table::addCustomer(Customer *customer) {
-    if(customersList.size() < capacity) {
-        customersList.push_back(customer);
-    }
-    else if(customersList.size() == capacity){
-        open = false;
-    }
-    else return;
+    customersList.push_back(customer);
 };
 
 //Todo: Needs to check if erase method is working properly, memory wise.
 //Todo: if its not ok, create a new vector and copy to it. afterword clear the first one.
 void Table::removeCustomer(int id) {
-    if (customersList.size() > 0) {
+    if (!customersList.empty()) {
         for (int i = 0; i < customersList.size(); ++i) {
             if (customersList.at(i)->getId() == id){
                 delete (customersList.at(i));
@@ -39,7 +33,7 @@ void Table::removeCustomer(int id) {
             }
         }
     }
-    if(orderList.size() > 0) {
+    if(!orderList.empty()) {
         for (int j = 0; j < orderList.size(); ++j) {
             if (orderList.at(j).first == id) {
                 orderList.back().first;
@@ -51,14 +45,14 @@ void Table::removeCustomer(int id) {
 };
 
 Customer *Table::getCustomer(int id) {
-    if (customersList.size() > 0) {
-        for (int i = 0; i < customersList.size(); ++i) {
-            if (customersList.at(i)->getId() == id) {
-                return customersList.at(i);
-            }
+    if (customersList.empty()) {
+        return nullptr;
+    }
+    for (auto customer : customersList) {
+        if (customer->getId() == id) {
+            return customer;
         }
     }
-    return nullptr;
 };
 
 std::vector<Customer *> &Table::getCustomers() {
@@ -72,8 +66,13 @@ std::vector<OrderPair> &Table::getOrders() {
 
 //TODO : save the orders
 void Table::order(const std::vector<Dish> &menu) {
-    for (int i = 0; i < customersList.size(); ++i) {
-        customersList.at(i)->order(menu);
+    for (auto customer: customersList) {
+        Customer* currCustomer = customer;
+        std::vector<int> orders = currCustomer->order(menu);
+        for (auto order : orders) {
+            OrderPair x(currCustomer->getId(), menu.at(order));
+            orderList.push_back(x);
+        }
     }
 };
 
@@ -83,9 +82,9 @@ void Table::openTable(){
 
 //Todo: Needs to check if erase method is working properly, memory wise.
 void Table::closeTable() {
-    open = true;
-    for (int i = 0; i < customersList.size(); ++i) {
-        delete customersList.at(i);
+    open = false;
+    for (auto customer : customersList) {
+        delete customer;
     }
     orderList.clear();
     customersList.clear();
@@ -93,10 +92,8 @@ void Table::closeTable() {
 
 int Table::getBill() {
     int billSum = 0;
-    if (orderList.size() > 0) {
-        for (int i = 0; i < orderList.size(); i++) {
-            billSum += orderList.at(i).second.getPrice();
-        }
+    for (auto order : orderList) {
+        billSum += order.second.getPrice();
     }
     return billSum;
 };
