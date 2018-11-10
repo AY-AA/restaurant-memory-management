@@ -17,7 +17,6 @@ public:
     BaseAction();
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
-    //<action_1_name> <action_1_args> <action_1_status>
     virtual std::string toString() const=0;
 protected:
     void complete();
@@ -48,7 +47,6 @@ public:
 private:
     const int tableId;
 
-    std::string findCustomerName(int id, Restaurant &restaurant);
 
 };
 

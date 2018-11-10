@@ -6,7 +6,7 @@
 #include "../include/Table.h"
 
 
-Restaurant::Restaurant() {};
+Restaurant::Restaurant() = default;
 
 Restaurant::Restaurant(const std::string &configFilePath)
 {
@@ -97,6 +97,7 @@ int Restaurant::parseLine(const std::string &currLine, int caseNumber)
 
             break;
         }
+        default: return caseNumber;
     }
 
     return caseNumber;
@@ -104,13 +105,13 @@ int Restaurant::parseLine(const std::string &currLine, int caseNumber)
 
 DishType Restaurant::parseDishType (const std::string& dish)
 {
-    if (dish.compare("VEG") == 0)
+    if (dish == "VEG")
         return DishType::VEG;
-    if (dish.compare("SPC") == 0)
+    if (dish == "SPC")
         return DishType::SPC;
-    if (dish.compare("BVG") == 0)
+    if (dish == "BVG")
         return DishType::BVG;
-    if (dish.compare("ALC") == 0)
+    if (dish =="ALC")
         return DishType::ALC;
 };
 
@@ -118,7 +119,7 @@ void Restaurant::insertNewDish(const std::string& currLine)
 {
     int dishId = menu.size();
     std::string dishName;
-    int dishPrice;
+    int dishPrice = -1;
     DishType dishType;
 
     int currDetail = 1;
@@ -144,14 +145,14 @@ void Restaurant::insertNewDish(const std::string& currLine)
         }
 
     }
-
-    menu.push_back(Dish(dishId,dishName,dishPrice,dishType));
+    if (dishPrice != -1)
+        menu.push_back(Dish(dishId,dishName,dishPrice,dishType));
 };
 
 
 Restaurant::~Restaurant()
 {
-    for (int i = 0; i <tables.size() ; ++i) {
-        delete tables.at(i);
+    for (auto table : tables) {
+        delete table;
     }
 };

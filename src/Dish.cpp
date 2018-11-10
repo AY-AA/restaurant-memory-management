@@ -24,3 +24,18 @@ DishType Dish::getType() const
     return type;
 };
 
+std::string Dish::toString() const
+{
+    std::string ans (name + " ");
+    if (type == DishType::VEG)
+        ans.append("VEG ");
+    if (type == DishType::SPC)
+        ans.append("SPC ");
+    if (type == DishType::BVG)
+        ans.append("BVG ");
+    if (type == DishType::ALC)
+        ans.append("ALC ");
+    ans.append(std::to_string(price));
+    return ans;
+
+};

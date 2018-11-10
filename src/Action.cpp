@@ -49,8 +49,8 @@ void OpenTable::act(Restaurant &restaurant){
     Table* tableToOpen = restaurant.getTable(tableId);
     if(tableToOpen != nullptr && tableToOpen->getCapacity() > customers.size() && !tableToOpen->isOpen()) {
         tableToOpen->openTable();
-        for (int i = 0; i < customers.size(); ++i) {
-            tableToOpen->addCustomer(customers.at(i));
+        for (auto customer : customers) {
+            tableToOpen->addCustomer(customer);
         }
         complete();
     }
@@ -62,8 +62,8 @@ void OpenTable::act(Restaurant &restaurant){
 
 std::string OpenTable::toString() const{
     std::string msg("open " + std::to_string(tableId ) + " ");
-    for (int i = 0; i < customers.size(); ++i) {
-        msg.append(customers.at(i)->toString() + " ");
+    for (auto customer: customers) {
+        msg.append(customer->toString() + " ");
     }
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -94,12 +94,12 @@ void Order::act(Restaurant &restaurant)
     {
         tmpTable->order(restaurant.getMenu());
         std::vector<OrderPair> orders = tmpTable->getOrders();
-        for (int i = 0; i < orders.size(); ++i)
+        for (auto order : orders)
         {
-            std::pair<int, Dish> currPair = orders.at(i);
+//            std::pair<int, Dish> currPair = orders.at(i);
 //            std::string customersName = restaurant.getTable(tableId)->getCustomer(currPair.first)->getName();
-            Customer* tmpCustomer = restaurant.getTable(tableId)->getCustomer(currPair.first);
-            std::cout << tmpCustomer->getName() << " ordered " << currPair.second.getName() << std::endl;
+            Customer* tmpCustomer = restaurant.getTable(tableId)->getCustomer(order.first);
+            std::cout << tmpCustomer->getName() << " ordered " << order.second.getName() << std::endl;
         }
     }
     else
@@ -209,7 +209,7 @@ std::string Close::toString() const{
 
 // ------------------ CloseAll
 
-CloseAll::CloseAll() {};
+CloseAll::CloseAll() = default;
 
 void CloseAll::act(Restaurant &restaurant) {
     int restCapacity = restaurant.getNumOfTables();
@@ -249,12 +249,12 @@ std::string CloseAll::toString() const
 
 // ------------------ PrintMenu
 
-PrintMenu::PrintMenu() {};
+PrintMenu::PrintMenu() = default;
 
 void PrintMenu::act(Restaurant &restaurant) {
     std::vector<Dish> menu = restaurant.getMenu();
-    for (int i = 0; i < menu.size(); ++i) {
-        std::cout  << menu.at(i).getName() << " " << menu.at(i).getType() << " " << menu.at(i).getPrice() << std::endl;
+    for (const auto &dish : menu) {
+        std:: cout << dish.toString() << std::endl;
     }
 };
 
@@ -286,16 +286,16 @@ void PrintTableStatus::act(Restaurant &restaurant) {
         std::cout << "Table " << tableId << "status: " << "closed";
     }
     else{
-        std::vector<Customer *>& tmpCust = tableToPrint->getCustomers();
-        std::vector<OrderPair>& tmpOrds = tableToPrint->getOrders();
+        std::vector<Customer *>& tmpCustomer = tableToPrint->getCustomers();
+        std::vector<OrderPair>& tmpOrders = tableToPrint->getOrders();
         std::cout << "Table " << tableId << "status: " << "open" << "\n";
-        std::cout << "Customers:" << "\n";
-        for (int i = 0; i < tmpCust.size(); ++i) {
-            std::cout << tmpCust.at(i)->getId() << tmpCust.at(i)->getName() << "\n";
+        std::cout << "Customers:" << std::endl;
+        for (auto customer : tmpCustomer) {
+            std::cout << customer->getId() << customer->getName() << "\n";
         }
         std::cout << "Orders:" << "\n";
-        for (int i = 0; i < tmpCust.size(); ++i) {
-            std::cout << tmpOrds.at(i).second.getName() << " " << tmpOrds.at(i).second.getPrice() << "NIS" << " " <<tmpOrds.at(i).first;
+        for (auto order : tmpOrders) {
+            std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS" << " " << order.first;
         }
     }
 };
@@ -318,12 +318,12 @@ std::string PrintTableStatus::toString() const
 
 // ------------------ PrintActionsLog
 
-PrintActionsLog::PrintActionsLog() {};
+PrintActionsLog::PrintActionsLog() = default;
 
 void PrintActionsLog::act(Restaurant &restaurant) {
     std::vector<BaseAction*> actsLog = restaurant.getActionsLog();
-    for (int i = 0; i < actsLog.size(); ++i) {
-        std::cout << actsLog.at(i)->toString() << std::endl;
+    for (auto action : actsLog) {
+        std::cout << action->toString() << std::endl;
     }
 };
 
@@ -345,7 +345,7 @@ std::string PrintActionsLog::toString() const
 
 // ------------------ BackupRestaurant
 
-BackupRestaurant::BackupRestaurant() {};
+BackupRestaurant::BackupRestaurant() = default;
 
 void BackupRestaurant::act(Restaurant &restaurant)
 {
@@ -368,9 +368,9 @@ std::string BackupRestaurant::toString() const
 
 
 
-// ------------------ RestoreResturant
+// ------------------ RestoreRestaurant
 
-RestoreResturant::RestoreResturant(){};
+RestoreResturant::RestoreResturant() = default;
 
 void RestoreResturant::act(Restaurant &restaurant)
 {

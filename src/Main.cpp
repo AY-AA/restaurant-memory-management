@@ -31,7 +31,10 @@ int main(int argc, char** argv){
     Order order(2);
     std::cout << order.toString() << endl;
     order.act(rest);
+    order.act(rest);
 
+    PrintMenu xx;
+    xx.act(rest);
 
     delete x;
     delete y;
