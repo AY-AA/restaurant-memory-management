@@ -288,10 +288,10 @@ void PrintTableStatus::act(Restaurant &restaurant) {
     else{
         std::vector<Customer *>& tmpCustomer = tableToPrint->getCustomers();
         std::vector<OrderPair>& tmpOrders = tableToPrint->getOrders();
-        std::cout << "Table " << tableId << "status: " << "open" << "\n";
+        std::cout << "Table " << tableId << " " << "status: " << "open" << "\n";
         std::cout << "Customers:" << std::endl;
         for (auto customer : tmpCustomer) {
-            std::cout << customer->getId() << customer->getName() << "\n";
+            std::cout << customer->getId() << " " << customer->getName() << "\n";
         }
         std::cout << "Orders:" << "\n";
         for (auto order : tmpOrders) {

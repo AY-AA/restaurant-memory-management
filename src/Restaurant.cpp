@@ -15,11 +15,10 @@ Restaurant::Restaurant(const std::string &configFilePath)
 void Restaurant::start()
 {
     std::string userChoice;
-    std::cout << "Restaurant is now open!";
+    std::cout << "Restaurant is now open!" << "\n";
 
     int nextId = 0;
     do{
-        std::string userChoice;
         std::getline(std::cin, userChoice);
 //        std::cin >> userChoice;
         std::string firstWord = userChoice.substr(0, userChoice.find(' '));
@@ -30,9 +29,11 @@ void Restaurant::start()
             int tableId = std::stoi(tableInstructions.at(1));
             std::string name;
             std::string type;
-            for (int i = 2; i < tableInstructions.size() - 1; i++) {
-                name = tableInstructions.at(i);
-                type = tableInstructions.at(i + 1);
+            for (int i = 2; i < tableInstructions.size(); i++) {
+                std::string pair = tableInstructions.at(i);
+                int indexOf = pair.find(',');
+                name = pair.substr(0,indexOf);
+                type = pair.substr(indexOf, pair.length());
                 if (type == "veg") {
                     Customer *toAdd = new VegetarianCustomer(name, nextId);
                     customersToAdd.push_back(toAdd);
@@ -54,7 +55,7 @@ void Restaurant::start()
             OpenTable* op = new OpenTable(tableId, customersToAdd);
             op->act(*this);
             actionsLog.push_back(op);
-            delete(op);
+            //delete(op);
         }
         else if(firstWord == "order"){
             std::string::size_type sz;
@@ -119,26 +120,26 @@ void Restaurant::start()
         else { // bad input
             std::cout << "bad input" << std::endl;
         }
-        std::cin >> userChoice;
-        firstWord = userChoice.substr(0, userChoice.find(" "));
+//        std::cin >> userChoice;
+//        firstWord = userChoice.substr(0, userChoice.find(" "));
     }
     while(userChoice != "closeall");
 };
 
 const std::vector<std::string>& Restaurant::parseInput(std::string &str) {
-    std::vector<std::string> v;
+    std::vector<std::string>* v = new std::vector<std::string>;
     int i = 0;
     while(i < str.length()) {
         if(str.at(i) == ' '){
             std::string sub = str.substr(0, i);
-            v.push_back(sub);
+            v->push_back(sub);
             str.erase(0,i + 1);
             i = 0;
         }
         i++;
     }
-    v.push_back(str);
-    return v;
+    v->push_back(str);
+    return *v;
 };
 
 int Restaurant::getNumOfTables() const
