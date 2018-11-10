@@ -9,6 +9,8 @@
 #include "../include/Restaurant.h"
 #include "../include/Dish.h"
 
+extern Restaurant* backup;
+
 // ------------------ BaseAction
 
 BaseAction::BaseAction()
@@ -176,7 +178,7 @@ Close::Close(int id):tableId(id) {};
 void Close::act(Restaurant &restaurant) {
     Table* tableToClose = restaurant.getTable(tableId);
     if(tableToClose != nullptr && tableToClose->isOpen()){
-        std::string stat = "Table " + std::to_string(tableId) + " was closed.";
+        std::string stat = "Table " + std::to_string(tableId) + " was closed. ";
         stat.append("Bill: " + std::to_string(tableToClose->getBill()));
         std::cout << stat << std::endl;
         tableToClose->closeTable();
@@ -283,20 +285,21 @@ void PrintTableStatus::act(Restaurant &restaurant) {
         return;
     }
     if(!tableToPrint->isOpen()){
-        std::cout << "Table " << tableId << "status: " << "closed";
+        std::cout << "Table " << tableId << " status: " << "closed";
     }
     else{
         std::vector<Customer *>& tmpCustomer = tableToPrint->getCustomers();
         std::vector<OrderPair>& tmpOrders = tableToPrint->getOrders();
-        std::cout << "Table " << tableId << "status: " << "open" << "\n";
+        std::cout << "Table " << tableId << " status: " << "open" << std::endl;
         std::cout << "Customers:" << std::endl;
         for (auto customer : tmpCustomer) {
-            std::cout << customer->getId() << customer->getName() << "\n";
+            std::cout << customer->getId() << " " << customer->getName() << std::endl;
         }
-        std::cout << "Orders:" << "\n";
+        std::cout << "Orders:" << std::endl;
         for (auto order : tmpOrders) {
-            std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS" << " " << order.first;
+            std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS" << " " << order.first << std::endl;
         }
+        std::cout << "Current Bill: " << tableToPrint->getBill() << std::endl;
     }
 };
 
@@ -349,8 +352,7 @@ BackupRestaurant::BackupRestaurant() = default;
 
 void BackupRestaurant::act(Restaurant &restaurant)
 {
-    Restaurant * newRestaurant = &restaurant;
-
+    backup = new Restaurant(restaurant);
 };
 
 std::string BackupRestaurant::toString() const
@@ -375,12 +377,13 @@ RestoreResturant::RestoreResturant() = default;
 
 void RestoreResturant::act(Restaurant &restaurant)
 {
-    if (&restaurant == nullptr)
+    if (backup == nullptr)
     {
         error("No backup available");
         std::cout << getErrorMsg() << std::endl;
         return;
     }
+    restaurant = *backup;
 
 };
 

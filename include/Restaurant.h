@@ -18,6 +18,7 @@ public:
     const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
     std::vector<Dish>& getMenu();
     ~Restaurant();
+    Restaurant& operator= (const Restaurant& other);
 
 private:
     bool open;
@@ -25,7 +26,7 @@ private:
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;
 
-    const std::vector<std::string>& parseInput(std::string& str);
+    const std::vector<std::string> parseInput(std::string& str);
     void readFile(const std::string &configFilePath);
     int parseLine(const std::string &currLine, int caseNumber);
     DishType parseDishType(const std::string&);
