@@ -13,10 +13,7 @@ extern Restaurant* backup;
 
 // ------------------ BaseAction
 
-BaseAction::BaseAction()
-{
-    status = ActionStatus::PENDING;
-};
+BaseAction::BaseAction() :  errorMsg(""), status(ActionStatus::PENDING) {};
 
 ActionStatus BaseAction::getStatus() const
 {
@@ -49,7 +46,8 @@ OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id)
 
 void OpenTable::act(Restaurant &restaurant){
     Table* tableToOpen = restaurant.getTable(tableId);
-    if(tableToOpen != nullptr && tableToOpen->getCapacity() > customers.size() && !tableToOpen->isOpen()) {
+    int numOfCustomer = customers.size();
+    if(tableToOpen->getCapacity() >= numOfCustomer && !tableToOpen->isOpen()) {
         tableToOpen->openTable();
         for (auto customer : customers) {
             tableToOpen->addCustomer(customer);
@@ -58,7 +56,7 @@ void OpenTable::act(Restaurant &restaurant){
     }
     else{
         error("Table does not exist or is already open");
-        std::cout<< getErrorMsg();
+        std::cout<< getErrorMsg() << std::endl;
     }
 }
 
@@ -83,6 +81,14 @@ std::string OpenTable::toString() const{
     return msg;
 }
 
+OpenTable::~OpenTable()
+{
+  for (auto customer : customers)
+      delete customer;
+};
+
+
+
 
 
 // ------------------ Order
@@ -94,20 +100,23 @@ void Order::act(Restaurant &restaurant)
     Table *tmpTable = restaurant.getTable(tableId);
     if (tmpTable != nullptr && tmpTable->isOpen())
     {
+        int lastOrder = tmpTable->getOrders().size();
         tmpTable->order(restaurant.getMenu());
         std::vector<OrderPair> orders = tmpTable->getOrders();
-        for (auto order : orders)
+        int numOfOrders = orders.size();
+        while (lastOrder < numOfOrders)
         {
-//            std::pair<int, Dish> currPair = orders.at(i);
-//            std::string customersName = restaurant.getTable(tableId)->getCustomer(currPair.first)->getName();
+            OrderPair order = orders.at(lastOrder);
             Customer* tmpCustomer = restaurant.getTable(tableId)->getCustomer(order.first);
             std::cout << tmpCustomer->getName() << " ordered " << order.second.getName() << std::endl;
+            lastOrder++;
         }
+        complete();
     }
     else
     {
         this->error("Table does not exist or is not open");
-        std::cout << getErrorMsg();
+        std::cout << getErrorMsg() << std::endl;
     }
 };
 
@@ -144,10 +153,11 @@ void MoveCustomer::act(Restaurant &restaurant) {
     if(srcT != nullptr && srcT->isOpen() && dstT != nullptr && dstT->isOpen() && c != nullptr && dstT->getCustomers().size() < dstT->getCapacity()) {
         srcT->removeCustomer(id);
         dstT->addCustomer(c);
+        complete();
     }
     else{
-        error("Cannot move customer");
-        std::cout << getErrorMsg();
+        error("Cannot move customer") ;
+        std::cout << getErrorMsg() << std::endl;
     }
 };
 
@@ -179,9 +189,10 @@ void Close::act(Restaurant &restaurant) {
     Table* tableToClose = restaurant.getTable(tableId);
     if(tableToClose != nullptr && tableToClose->isOpen()){
         std::string stat = "Table " + std::to_string(tableId) + " was closed. ";
-        stat.append("Bill: " + std::to_string(tableToClose->getBill()));
+        stat.append("Bill " + std::to_string(tableToClose->getBill()) + "NIS");
         std::cout << stat << std::endl;
         tableToClose->closeTable();
+        complete();
     }
     else{
         error("Table does not exist or is not open");
@@ -215,7 +226,7 @@ CloseAll::CloseAll() = default;
 
 void CloseAll::act(Restaurant &restaurant) {
     int restCapacity = restaurant.getNumOfTables();
-    if(!restCapacity > 0)
+    if(!(restCapacity > 0))
     {
         return;
     }
@@ -226,11 +237,12 @@ void CloseAll::act(Restaurant &restaurant) {
         if (currTable->isOpen())
         {
             std::string stat = "Table " + std::to_string(i) + " was closed.";
-            stat.append("Bill: " + std::to_string(currTable->getBill()));
+            stat.append(" Bill " + std::to_string(currTable->getBill()) + "NIS");
             std::cout << stat << std::endl;
             currTable->closeTable();
         }
     }
+    complete();
 };
 
 std::string CloseAll::toString() const
@@ -258,6 +270,7 @@ void PrintMenu::act(Restaurant &restaurant) {
     for (const auto &dish : menu) {
         std:: cout << dish.toString() << std::endl;
     }
+    complete();
 };
 
 std::string PrintMenu::toString() const {
@@ -285,7 +298,7 @@ void PrintTableStatus::act(Restaurant &restaurant) {
         return;
     }
     if(!tableToPrint->isOpen()){
-        std::cout << "Table " << tableId << " status: " << "closed";
+        std::cout << "Table " << tableId << " status: " << "closed" << std::endl;
     }
     else{
         std::vector<Customer *>& tmpCustomer = tableToPrint->getCustomers();
@@ -297,10 +310,11 @@ void PrintTableStatus::act(Restaurant &restaurant) {
         }
         std::cout << "Orders:" << std::endl;
         for (auto order : tmpOrders) {
-            std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS" << " " << order.first << std::endl;
+            std::cout << order.second.getName() << " " << order.second.getPrice() << "NIS " << order.first << std::endl;
         }
-        std::cout << "Current Bill: " << tableToPrint->getBill() << std::endl;
+        std::cout << "Current Bill: " << tableToPrint->getBill() << "NIS" << std::endl;
     }
+    complete();
 };
 
 std::string PrintTableStatus::toString() const
@@ -328,6 +342,7 @@ void PrintActionsLog::act(Restaurant &restaurant) {
     for (auto action : actsLog) {
         std::cout << action->toString() << std::endl;
     }
+    complete();
 };
 
 std::string PrintActionsLog::toString() const
@@ -353,6 +368,7 @@ BackupRestaurant::BackupRestaurant() = default;
 void BackupRestaurant::act(Restaurant &restaurant)
 {
     backup = new Restaurant(restaurant);
+    complete();
 };
 
 std::string BackupRestaurant::toString() const
@@ -383,6 +399,7 @@ void RestoreResturant::act(Restaurant &restaurant)
         std::cout << getErrorMsg() << std::endl;
         return;
     }
+    complete();
     restaurant = *backup;
 
 };

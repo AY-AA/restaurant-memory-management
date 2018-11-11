@@ -2,12 +2,12 @@
 all: rest
 
 # Tool invocations
-# Executable "hello" depends on the files hello.o and run.o.
+# Executable "rest" depends on the files inside bin folder
 rest: bin/Action.o bin/Customer.o bin/Dish.o bin/Main.o bin/Restaurant.o bin/Table.o
 	@echo 'Building target: rest'
 	@echo 'Invoking: C++ Linker'
 	g++ -o bin/rest bin/Action.o bin/Customer.o bin/Dish.o bin/Main.o bin/Restaurant.o bin/Table.o
-	@echo 'Finished building target: hello'
+	@echo 'Finished building target: rest'
 	@echo ' '
 
 # Depends on the source and header files
