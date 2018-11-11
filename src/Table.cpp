@@ -21,14 +21,10 @@ void Table::addCustomer(Customer *customer) {
     customersList.push_back(customer);
 };
 
-//Todo: Needs to check if erase method is working properly, memory wise.
-//Todo: if its not ok, create a new vector and copy to it. afterword clear the first one.
 void Table::removeCustomer(int id) {
     if (!customersList.empty()) {
         for (int i = 0; i < customersList.size(); ++i) {
             if (customersList.at(i)->getId() == id){
-                delete (customersList.at(i));
-                customersList.at(i) = nullptr;
                 customersList.erase((customersList.begin() + i));
             }
         }
@@ -67,10 +63,10 @@ std::vector<OrderPair> &Table::getOrders() {
 //TODO : save the orders
 void Table::order(const std::vector<Dish> &menu) {
     for (auto customer: customersList) {
-        Customer* currCustomer = customer;
-        std::vector<int> orders = currCustomer->order(menu);
+//        Customer* currCustomer = customer;
+        std::vector<int> orders = customer->order(menu);
         for (auto order : orders) {
-            OrderPair x(currCustomer->getId(), menu.at(order));
+            OrderPair x(customer->getId(), menu.at(order));
             orderList.push_back(x);
         }
     }

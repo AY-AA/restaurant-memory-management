@@ -28,6 +28,8 @@ void Restaurant::start()
     do{
         std::string userInput;
         std::getline(std::cin, userInput);
+
+        userInput.erase(userInput.find_last_not_of("\n\r\t")+1);
         firstWord = userInput.substr(0, userInput.find(' '));
         std::vector<std::string> tableInstructions = parseInput(userInput);
 
@@ -53,6 +55,7 @@ void Restaurant::start()
             MoveCustomer* move = new MoveCustomer(srcTable,destTable,customerId);
             move->act(*this);
             actionsLog.push_back(move);
+
         }
         else if(firstWord == "close"){
             std::string::size_type sz;
@@ -95,6 +98,7 @@ void Restaurant::start()
         }
     }
     while(firstWord != "closeall");
+    delete this;
 };
 
 int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId)
@@ -279,5 +283,8 @@ Restaurant::~Restaurant()
 {
     for (auto table : tables) {
         delete table;
+    }
+    for (auto log : actionsLog){
+        delete log;
     }
 };
