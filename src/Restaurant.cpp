@@ -21,47 +21,23 @@ Restaurant& Restaurant::operator= (const Restaurant& other)
 void Restaurant::start()
 {
     std::string userChoice;
-    std::cout << "Restaurant is now open!";
+    std::cout << "Restaurant is now open!" << std::endl;
+    std::string firstWord;
 
     int nextId = 0;
     do{
-        std::string userChoice;
-        std::getline(std::cin, userChoice);
-        std::string firstWord = userChoice.substr(0, userChoice.find(' '));
-        std::vector<std::string> tableInstructions = parseInput(userChoice);
+        std::string userInput;
+        std::getline(std::cin, userInput);
+
+        userInput.erase(userInput.find_last_not_of("\n\r\t")+1);
+        firstWord = userInput.substr(0, userInput.find(' '));
+        std::vector<std::string> tableInstructions = parseInput(userInput);
 
         if (firstWord == "open") {
-            std::vector<Customer *> customersToAdd;
-            int tableId = std::stoi(tableInstructions.at(1));
-            std::string name;
-            std::string type;
-            for (int i = 2; i < tableInstructions.size(); i++) {
-                std::string pair = tableInstructions.at(i);
-                int indexOf = pair.find(',');
-                name = pair.substr(0,indexOf);
-                type = pair.substr(indexOf +1, pair.length());
-                if (type == "veg") {
-                    Customer *toAdd = new VegetarianCustomer(name, nextId);
-                    customersToAdd.push_back(toAdd);
-                    nextId++;
-                } else if (type == "spc") {
-                    Customer *toAdd = new SpicyCustomer(name, nextId);
-                    customersToAdd.push_back(toAdd);
-                    nextId++;
-                } else if (type == "chp") {
-                    Customer *toAdd = new CheapCustomer(name, nextId);
-                    customersToAdd.push_back(toAdd);
-                    nextId++;
-                } else { //alc
-                    Customer *toAdd = new AlchoholicCustomer(name, nextId);
-                    customersToAdd.push_back(toAdd);
-                    nextId++;
-                }
-            }
-            OpenTable* op = new OpenTable(tableId, customersToAdd);
-            op->act(*this);
-            actionsLog.push_back(op);
-            //delete(op);
+            nextId = openTable(tableInstructions,nextId);
+            //if an error occurred, reduce the number of illegal customers that were added
+            if (actionsLog.at(actionsLog.size()-1)->getStatus() == ActionStatus::ERROR)
+                nextId =nextId - (tableInstructions.size() - 2);
         }
         else if(firstWord == "order"){
             std::string::size_type sz;
@@ -118,11 +94,47 @@ void Restaurant::start()
 //            restore->act();
         }
         else { // bad input
-            std::cout << "bad input" << std::endl;
+            std::cout << "wrong input" << std::endl;
         }
     }
-    while(userChoice != "closeall");
+    while(firstWord != "closeall");
+    delete this;
 };
+
+int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId)
+{
+    std::vector<Customer *> customersToAdd;
+    int tableId = std::stoi(tableInstructions.at(1));
+    std::string name;
+    std::string type;
+    for (int i = 2; i < tableInstructions.size(); i++) {
+        std::string pair = tableInstructions.at(i);
+        int indexOf = pair.find(',');
+        name = pair.substr(0,indexOf);
+        type = pair.substr(indexOf +1, pair.length());
+        if (type == "veg") {
+            Customer *toAdd = new VegetarianCustomer(name, nextId);
+            customersToAdd.push_back(toAdd);
+            nextId++;
+        } else if (type == "spc") {
+            Customer *toAdd = new SpicyCustomer(name, nextId);
+            customersToAdd.push_back(toAdd);
+            nextId++;
+        } else if (type == "chp") {
+            Customer *toAdd = new CheapCustomer(name, nextId);
+            customersToAdd.push_back(toAdd);
+            nextId++;
+        } else { //alc
+            Customer *toAdd = new AlchoholicCustomer(name, nextId);
+            customersToAdd.push_back(toAdd);
+            nextId++;
+        }
+    }
+    OpenTable* op = new OpenTable(tableId, customersToAdd);
+    op->act(*this);
+    actionsLog.push_back(op);
+    return nextId;
+}
 
 const std::vector<std::string> Restaurant::parseInput(std::string &str) {
     std::vector<std::string> v;
@@ -271,5 +283,8 @@ Restaurant::~Restaurant()
 {
     for (auto table : tables) {
         delete table;
+    }
+    for (auto log : actionsLog){
+        delete log;
     }
 };

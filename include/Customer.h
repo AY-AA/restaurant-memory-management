@@ -28,7 +28,6 @@ public:
     virtual ~VegetarianCustomer() = default;
 
 private:
-    bool _ordered;
 };
 
 

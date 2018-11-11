@@ -21,6 +21,7 @@ public:
     ActionStatus getStatus() const;
     virtual void act(Restaurant& restaurant)=0;
     virtual std::string toString() const=0;
+    virtual ~BaseAction() = default;
 protected:
     void complete();
     void error(std::string errorMsg);
@@ -36,6 +37,9 @@ public:
     OpenTable(int id, std::vector<Customer *> &customersList);
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~OpenTable();
+
+
 private:
     const int tableId;
     const std::vector<Customer *> customers;
@@ -47,6 +51,7 @@ public:
     Order(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~Order() = default;
 private:
     const int tableId;
 
@@ -59,6 +64,7 @@ public:
     MoveCustomer(int src, int dst, int customerId);
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~MoveCustomer() = default;
 private:
     const int srcTable;
     const int dstTable;
@@ -71,6 +77,7 @@ public:
     Close(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~Close() = default;
 private:
     const int tableId;
 };
@@ -81,6 +88,7 @@ public:
     CloseAll();
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~CloseAll() = default;
 private:
 };
 
@@ -90,6 +98,7 @@ public:
     PrintMenu();
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~PrintMenu() = default;
 private:
 };
 
@@ -99,6 +108,7 @@ public:
     PrintTableStatus(int id);
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~PrintTableStatus() = default;
 private:
     const int tableId;
 };
@@ -109,6 +119,7 @@ public:
     PrintActionsLog();
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~PrintActionsLog() = default;
 private:
 };
 
@@ -118,6 +129,7 @@ public:
     BackupRestaurant();
     void act(Restaurant &restaurant);
     std::string toString() const;
+    virtual ~BackupRestaurant() = default;
 private:
 };
 
@@ -127,6 +139,7 @@ public:
     RestoreResturant();
     void act(Restaurant &restaurant);
     std::string toString() const;
+    ~RestoreResturant() = default;
 
 };
 

@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
-#include "../include/Dish.h"
 #include "../include/Customer.h"
+#include "../include/Dish.h"
 
 
 
-Customer::Customer(std::string c_name, int c_id) : id(c_id), name (c_name) {};
+Customer::Customer(std::string c_name, int c_id) :  name (c_name), id(c_id) {};
 
 std::string Customer::getName() const
 {
@@ -21,10 +21,7 @@ int Customer::getId() const
 
 // Vegetarian Customer
 
-VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id)
-{
-    _ordered = false;
-};
+VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id) {};
 
 std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //orders the smallest id and most expensive beverage (non-alcoholic)
 {
@@ -33,31 +30,27 @@ std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //or
     int bvgPrice = -1;
 
     // finding dish
-    if (!_ordered) {
-        for (int i = 0; !_ordered && i < menu.size(); ++i) {
-            if (menu.at(i).getType() == DishType::VEG && (dishID > menu.at(i).getId() || dishID == -1)) {
-                dishID = menu.at(i).getId();
-            }
+    for (int i = 0; i < menu.size(); ++i) {
+        if (menu.at(i).getType() == DishType::VEG && (dishID > menu.at(i).getId() || dishID == -1)) {
+            dishID = menu.at(i).getId();
         }
-        if (dishID != -1)
-        {
-            ans.push_back(dishID);
-            _ordered = true;
-        }
+    }
+    if (dishID != -1)
+    {
+        ans.push_back(dishID);
     }
 
     // finding beverage
-    else {
-        for (auto dish : menu) {
-            if (dish.getType() == DishType::BVG && (bvgPrice < dish.getPrice() || dishID == -1))
-            {
-                bvgPrice = dish.getPrice();
-                dishID = dish.getId();
-            }
+    for (auto dish : menu) {
+        if (dish.getType() == DishType::BVG && (bvgPrice < dish.getPrice() || dishID == -1))
+        {
+            bvgPrice = dish.getPrice();
+            dishID = dish.getId();
         }
-        if (bvgPrice != -1)
-            ans.push_back(dishID);
     }
+    if (bvgPrice != -1)
+        ans.push_back(dishID);
+
     return ans;
 };
 
@@ -132,7 +125,7 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu)    //orders
         _ordered = true;
     }
 
-    //orders beverage
+        //orders beverage
     else
     {
         for (auto dish : menu) {
