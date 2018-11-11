@@ -31,6 +31,7 @@ private:
     int parseLine(const std::string &currLine, int caseNumber);
     DishType parseDishType(const std::string&);
     void insertNewDish(const std::string&);
+    int openTable(std::vector<std::string>, int nextId);
 
 };
 
