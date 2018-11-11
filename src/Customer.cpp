@@ -83,6 +83,7 @@ std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders
     if (_ordered)
         return ans;
     int cheapestID = -1;
+
     int price = -1;
     for (auto dish : menu) {
         if (price > dish.getPrice() || cheapestID == -1)
