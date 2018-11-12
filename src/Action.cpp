@@ -43,7 +43,7 @@ std::string BaseAction::getErrorMsg() const
 
 // ------------------ OpenTable
 
-OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id),customers(customersList) {};
+OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id),customers(customersList),_cloned (false){};
 
 void OpenTable::act(Restaurant &restaurant){
     Table* tableToOpen = restaurant.getTable(tableId);
@@ -82,16 +82,46 @@ std::string OpenTable::toString() const{
     }
     return msg;
 }
-
+//TODO : FIX MEMORY LEAK
 OpenTable* OpenTable::clone(){
     std::vector<Customer *> toClone;
     for (auto customer : customers) {
         toClone.push_back(customer->clone());
     }
     OpenTable* opToClone = new OpenTable(tableId,toClone);
+    opToClone->_cloned = true;
     return opToClone;
 };
 
+OpenTable::~OpenTable()
+{
+    if (!_cloned)
+        return;
+    for (auto customer : customers)
+        if (customer != nullptr) {
+            delete customer;
+            customer = nullptr;
+        }
+    customers.clear();
+};
+
+OpenTable::OpenTable(const OpenTable& other) : tableId(other.tableId)
+{
+    for (auto customer : other.customers)
+        customers.push_back(customer->clone());
+};
+
+OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId)
+{
+    for (auto customer : other.customers) {
+        if (customer != nullptr) {
+            customers.push_back(customer->clone());
+            delete customer;
+            customer = nullptr;
+        }
+    }
+
+};
 
 
 // ------------------ Order
@@ -394,6 +424,7 @@ void BackupRestaurant::act(Restaurant &restaurant)
     if(backup != nullptr) {
         delete(backup);
     }
+    //TODO : TRY back up restaurat
     backup = new Restaurant(restaurant);
     complete();
 

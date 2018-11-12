@@ -28,6 +28,7 @@ void Table::removeCustomer(int id) {
         for (int i = 0; i < numOfCustomers; ++i) {
             if (customersList.at(i)->getId() == id){
                 customersList.erase((customersList.begin() + i));
+                numOfCustomers--;
             }
         }
     }
@@ -106,8 +107,9 @@ bool Table::isOpen() {
 
 Table::~Table(){
     for (auto customer: customersList) {
-        if (customer != nullptr)
-            delete(customer);
+        if (customer != nullptr) {
+            delete customer;
+        }
     }
     customersList.clear();
 };
@@ -139,13 +141,20 @@ Table& Table::operator=(const Table &other) {
 Table::Table(Table&& other):capacity(other.capacity),open(other.open),customersList(other.customersList),orderList(other.orderList){
     int numOfCustomers = other.customersList.size();
     for (int i = 0; i < numOfCustomers; i++) {
+        if (other.customersList.at(i) != nullptr)
+        {
+            delete(other.customersList.at(i));
+        }
         other.customersList.at(i) = nullptr;
     }
 };
 
 Table& Table::operator=(Table&& other) {
     for (auto customer : customersList) {
-        delete (customer);
+        if (customer != nullptr)
+        {
+            delete (customer);
+        }
     }
     customersList.clear();
     for (auto toAdd : other.customersList) {
@@ -153,6 +162,10 @@ Table& Table::operator=(Table&& other) {
     }
     int numOfCustomers = other.customersList.size();
     for (int i = 0; i < numOfCustomers; ++i) {
+        if (other.customersList.at(i) != nullptr)
+        {
+            delete(other.customersList.at(i));
+        }
         other.customersList.at(i) = nullptr;
     }
 

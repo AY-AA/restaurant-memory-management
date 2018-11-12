@@ -23,6 +23,7 @@ public:
     virtual std::string toString() const=0;
     virtual BaseAction* clone() = 0;
     virtual ~BaseAction() = default;
+
 protected:
     void complete();
     void error(std::string errorMsg);
@@ -36,15 +37,19 @@ private:
 class OpenTable : public BaseAction {
 public:
     OpenTable(int id, std::vector<Customer *> &customersList);
-    OpenTable(const OpenTable& other);
     void act(Restaurant &restaurant);
     std::string toString() const;
     virtual OpenTable* clone();
-    virtual ~OpenTable() = default;
+    virtual ~OpenTable();
+    OpenTable(const OpenTable& other);
+    OpenTable(OpenTable&& other);
+    OpenTable& operator=(OpenTable&& other);
+//    void setCloned(const std::vector<Customer*> &customersList);
 
 private:
     const int tableId;
-    const std::vector<Customer *> customers;
+    std::vector<Customer *> customers;
+    bool _cloned;
 };
 
 

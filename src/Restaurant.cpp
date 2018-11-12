@@ -17,7 +17,7 @@ void Restaurant::start()
     std::string userChoice;
     std::cout << "Restaurant is now open!" << std::endl;
     std::string firstWord;
-
+    BaseAction* currAction;
     int nextId = 0;
     do{
         std::string userInput;
@@ -36,9 +36,9 @@ void Restaurant::start()
         else if(firstWord == "order"){
             std::string::size_type sz;
             int orderTable = std::stoi (tableInstructions.at(1),&sz);
-            Order* order = new Order(orderTable);
-            order->act(*this);
-            actionsLog.push_back(order);
+            currAction = new Order(orderTable);
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "move"){
             std::string::size_type sz;
@@ -46,48 +46,50 @@ void Restaurant::start()
             int destTable = std::stoi (tableInstructions.at(2),&sz);
             int customerId = std::stoi (tableInstructions.at(3),&sz);
 
-            MoveCustomer* move = new MoveCustomer(srcTable,destTable,customerId);
-            move->act(*this);
-            actionsLog.push_back(move);
+            currAction = new MoveCustomer(srcTable,destTable,customerId);
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
 
         }
         else if(firstWord == "close"){
             std::string::size_type sz;
             int table = std::stoi (tableInstructions.at(1),&sz);
-            Close* close = new Close(table);
-            close->act(*this);
-            actionsLog.push_back(close);
+            currAction = new Close(table);
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "closeall"){
-            CloseAll *closeall = new CloseAll();
-            closeall->act(*this);
-            actionsLog.push_back(closeall);
+            currAction = new CloseAll();
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "menu"){
-            PrintMenu *menu = new PrintMenu();
-            menu->act(*this);
-            actionsLog.push_back(menu);
+            currAction = new PrintMenu();
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "status"){
             std::string::size_type sz;
             int table = std::stoi (tableInstructions.at(1),&sz);
-            PrintTableStatus* status = new PrintTableStatus(table);
-            status->act(*this);
-            actionsLog.push_back(status);
+            currAction = new PrintTableStatus(table);
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "log"){
-            PrintActionsLog* log = new PrintActionsLog();
-            log->act(*this);
-            actionsLog.push_back(log);
+            currAction = new PrintActionsLog();
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else if(firstWord == "backup"){
-            BackupRestaurant * backupRestaurant = new BackupRestaurant();
-            backupRestaurant->act(*this);
+            currAction = new BackupRestaurant();
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
 
         }
         else if(firstWord == "restore"){
-            RestoreResturant * restore = new RestoreResturant();
-            restore->act(*this);
+            currAction = new RestoreResturant();
+            currAction->act(*this);
+            actionsLog.push_back(currAction);
         }
         else { // bad input
             std::cout << "wrong input" << std::endl;
@@ -96,6 +98,7 @@ void Restaurant::start()
     while(firstWord != "closeall");
     clearLogs();
     clearTables();
+
 };
 
 int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId)
@@ -284,15 +287,14 @@ void Restaurant::insertNewDish(const std::string& currLine)
         menu.push_back(Dish(menu.size(),dishName,dishPrice,dishType));
 };
 
-
 Restaurant::~Restaurant()
 {
     clearLogs();
     clearTables();
 };
 
-
-Restaurant::Restaurant(const Restaurant& other):open(other.open),menu(other.menu) {
+Restaurant::Restaurant(const Restaurant& other):open(other.open),menu(other.menu)
+{
     int size = other.tables.size();
     for (int i = 0; i < size; ++i) {
         tables.push_back(other.tables.at(i)->clone());
@@ -303,7 +305,8 @@ Restaurant::Restaurant(const Restaurant& other):open(other.open),menu(other.menu
     }
 };
 
-Restaurant& Restaurant::operator=(const Restaurant &other) {
+Restaurant& Restaurant::operator=(const Restaurant &other)
+{
     if(&other == this) {
         return *this;
     }
@@ -326,23 +329,31 @@ Restaurant& Restaurant::operator=(const Restaurant &other) {
     return *this;
 };
 
-Restaurant::Restaurant(Restaurant&& other):open(other.open),tables(other.tables),menu(other.menu),actionsLog(other.actionsLog){
-//    for (auto table : other.tables) {
-//        table = nullptr;
-//    }
+Restaurant::Restaurant(Restaurant&& other):open(other.open),tables(other.tables),menu(other.menu),actionsLog(other.actionsLog)
+{
     int size = other.tables.size();
     for (int i = 0; i < size; i++) {
-        other.tables.at(i) = nullptr;
+        if (other.tables.at(i) != nullptr) {
+            delete other.tables.at(i);
+            other.tables.at(i) = nullptr;
+        }
     }
     size = other.actionsLog.size();
     for (int i = 0; i < size; i++) {
-        other.actionsLog.at(i) = nullptr;
+        if (other.tables.at(i) != nullptr)
+        {
+            delete other.tables.at(i);
+            other.actionsLog.at(i) = nullptr;
+        }
     }
 };
 
 Restaurant& Restaurant::operator=(Restaurant&& other) {
     for (auto table : tables) {
-        delete (table);
+        if (table != nullptr)
+        {
+            delete (table);
+        }
     }
     tables.clear();
     for (auto toAdd : other.tables) {
@@ -350,10 +361,17 @@ Restaurant& Restaurant::operator=(Restaurant&& other) {
     }
     int size = other.tables.size();
     for (int i = 0; i < size; i++) {
-        other.tables.at(i) = nullptr;
+        if (other.tables.at(i) != nullptr)
+        {
+            delete other.tables.at(i);
+            other.tables.at(i) = nullptr;
+        }
     }
     for (auto action : actionsLog) {
-        delete (action);
+        if (action != nullptr)
+        {
+            delete (action);
+        }
     }
     actionsLog.clear();
     for (auto toAdd : other.actionsLog) {
@@ -361,6 +379,10 @@ Restaurant& Restaurant::operator=(Restaurant&& other) {
     }
     size = other.actionsLog.size();
     for (int i = 0; i < size; i++) {
+        if (other.actionsLog.at(i) != nullptr)
+        {
+            delete other.actionsLog.at(i);
+        }
         other.actionsLog.at(i) = nullptr;
     }
     return *this;
@@ -369,15 +391,17 @@ Restaurant& Restaurant::operator=(Restaurant&& other) {
 void Restaurant::clearLogs()
 {
     for (auto log : actionsLog)
-        if(log != nullptr)
+        if(log != nullptr) {
             delete log;
-        actionsLog.clear();
+        }
+    actionsLog.clear();
 };
 
 void Restaurant::clearTables()
 {
     for (auto table : tables)
-        if (table != nullptr)
+        if (table != nullptr) {
             delete table;
-        tables.clear();
+        }
+    tables.clear();
 };

@@ -24,7 +24,7 @@ int main(int argc, char** argv){
         delete backup;
         backup = nullptr;
 }
-//
+
 //    string configurationFile = "../config.txt";
 //    Restaurant rest(configurationFile);
 //    rest.start();
