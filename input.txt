@@ -9,4 +9,4 @@ status 1
 status 2
 open 2 Jon,spc Sam,spc
 log
-closeallx
+closeall

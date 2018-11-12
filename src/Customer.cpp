@@ -18,7 +18,6 @@ int Customer::getId() const
 };
 
 
-
 // Vegetarian Customer
 
 VegetarianCustomer::VegetarianCustomer(std::string name, int id) : Customer(name,id) {};
@@ -30,9 +29,9 @@ std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //or
     int bvgPrice = -1;
 
     // finding dish
-    for (int i = 0; i < menu.size(); ++i) {
-        if (menu.at(i).getType() == DishType::VEG && (dishID > menu.at(i).getId() || dishID == -1)) {
-            dishID = menu.at(i).getId();
+    for (auto dish : menu) {
+        if (dish.getType() == DishType::VEG && (dishID > dish.getId() || dishID == -1)) {
+            dishID = dish.getId();
         }
     }
     if (dishID != -1)
@@ -61,14 +60,13 @@ std::string VegetarianCustomer::toString() const
     return ans;
 };
 
-
+VegetarianCustomer* VegetarianCustomer::clone(){
+    return new VegetarianCustomer(*this);
+}
 
 // Cheap Customer
 
-CheapCustomer::CheapCustomer(std::string name, int id) : Customer(name,id)
-{
-    _ordered = false;
-};
+CheapCustomer::CheapCustomer(std::string name, int id) : Customer(name,id) , _ordered(false) {};
 
 std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders cheapest dish, only once.
 {
@@ -86,7 +84,7 @@ std::vector<int> CheapCustomer::order(const std::vector<Dish> &menu)    //orders
         }
     }
     ans.push_back(cheapestID);
-    _ordered = false;
+    _ordered = true;
     return ans;
 };
 
@@ -97,14 +95,14 @@ std::string CheapCustomer::toString() const
     return ans;
 }
 
+CheapCustomer* CheapCustomer::clone(){
+    return new CheapCustomer(*this);
+}
 
 
 // Spicy Customer
 
-SpicyCustomer::SpicyCustomer(std::string name, int id) : Customer(name,id)
-{
-    _ordered = false;
-};
+SpicyCustomer::SpicyCustomer(std::string name, int id) : Customer(name,id), _ordered(false){};
 
 std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu)    //orders the most expensive spicy dish, and then cheapest non-alcoholic beverage
 {
@@ -149,18 +147,17 @@ std::string SpicyCustomer::toString() const
     return ans;
 };
 
+SpicyCustomer* SpicyCustomer::clone(){
+    return new SpicyCustomer(*this);
+}
 
 
 
 // Alcoholic Customer
 
 
-AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id)
-{
-    _ordered = true;
-    _canOrder = true;
-    _alcPrice = -1;
-};
+AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id), _ordered(false), _canOrder(true), _alcPrice(-1)
+{};
 
 std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //orders cheapest alcoholic beverage and then next expensive till there are no more
 {
@@ -176,6 +173,7 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //or
                 orderPrice = dish.getPrice();
             }
         }
+        _alcPrice = orderPrice;
         _ordered = true;
         ans.push_back(orderID);
     }
@@ -184,9 +182,12 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //or
     else if (_canOrder)
     {
         orderID = findNextAlcoholicIndex(menu);
-        if (orderID == -1)
+        if (orderID == -1) {
             _canOrder = false;
-        ans.push_back(orderID);
+        }
+        else {
+            ans.push_back(orderID);
+        }
     }
     return ans;
 };
@@ -222,8 +223,13 @@ int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
             }
         }
     }
-    _alcPrice = nextPrice;
+    if(index != -1){
+        _alcPrice = nextPrice;
+    }
     return index;
 };
 
 
+AlchoholicCustomer* AlchoholicCustomer::clone(){
+    return new AlchoholicCustomer(*this);
+}

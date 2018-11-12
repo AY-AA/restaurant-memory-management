@@ -39,3 +39,8 @@ std::string Dish::toString() const
     return ans;
 
 };
+
+Dish::Dish(const Dish& other):id(other.id), name(other.name), price(other.price), type(other.type) {
+
+};
+

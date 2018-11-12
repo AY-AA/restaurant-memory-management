@@ -21,6 +21,13 @@ public:
     void closeTable();
     int getBill();
     bool isOpen();
+    Table* clone();
+    ~Table();
+    Table(const Table& other);
+    Table& operator=(const Table& other);
+    Table(Table&& other);
+    Table& operator=(Table&& other);
+
 private:
     int capacity;
     bool open;

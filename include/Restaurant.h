@@ -18,7 +18,11 @@ public:
     const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
     std::vector<Dish>& getMenu();
     ~Restaurant();
-    Restaurant& operator= (const Restaurant& other);
+    Restaurant& operator=(const Restaurant& other);
+    Restaurant(const Restaurant& other);
+    Restaurant(Restaurant&& other);
+    Restaurant& operator=(Restaurant&& other);
+
 
 private:
     bool open;
@@ -32,7 +36,8 @@ private:
     DishType parseDishType(const std::string&);
     void insertNewDish(const std::string&);
     int openTable(std::vector<std::string>, int nextId);
-
+    void clearLogs();
+    void clearTables();
 };
 
 #endif
