@@ -49,6 +49,9 @@ void OpenTable::act(Restaurant &restaurant)
 {
     Table* tableToOpen = restaurant.getTable(tableId);
     int numOfCustomer = customers.size();
+    for (auto customer: customers) {
+        _arguments.append(customer->toString() + " ");
+    }
     if(tableToOpen->getCapacity() >= numOfCustomer && !(tableToOpen->isOpen())) {
         tableToOpen->openTable();
         for (auto customer : customers) {
@@ -57,32 +60,25 @@ void OpenTable::act(Restaurant &restaurant)
         complete();
     }
     else{
-        //TODO :: 1. get customers, copy arguments, delete them
-        std::string msg;
-        for (auto customer: customers) {
-            msg.append(customer->toString() + " ");
+        for (auto customer : customers) {
             delete customer;
-            customer = nullptr;
         }
         customers.clear();
-        error(msg + "Error: Table does not exist or is already open");
-        std::cout<< "Error: Table does not exist or is already open" << std::endl;
+        error("Error: Table does not exist or is already open");
+        std::cout<< getErrorMsg() << std::endl;
 
     }
 }
 
 std::string OpenTable::toString() const{
     std::string msg("open " + std::to_string(tableId ) + " ");
-    for (auto customer: customers) {
-        msg.append(customer->toString() + " ");
-    }
     if (getStatus() == ActionStatus::COMPLETED)
     {
-        msg.append("Completed");
+        msg.append(_arguments + "Completed");
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append(getErrorMsg());
+        msg.append(_arguments + getErrorMsg());
     }
     else
     {
@@ -93,9 +89,6 @@ std::string OpenTable::toString() const{
 
 OpenTable* OpenTable::clone(){
     std::vector<Customer *> toClone;
-    for (auto customer : customers) {
-        toClone.push_back(customer->clone());
-    }
     OpenTable* opToClone = new OpenTable(tableId,toClone);
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -105,20 +98,21 @@ OpenTable* OpenTable::clone(){
     {
         opToClone->error(getErrorMsg());
     }
-    opToClone->_cloned = true;
+//    opToClone->_cloned = true;
+    opToClone-> _arguments = _arguments;
     return opToClone;
 };
 
 OpenTable::~OpenTable()
 {
-    if (!_cloned) //table is responsible for deletion in this case
-        return;
-    for (auto customer : customers)
-        if (customer != nullptr) {
-            delete customer;
-            customer = nullptr;
-        }
-    customers.clear();
+//    if (!_cloned) //table is responsible for deletion in this case
+//        return;
+//    for (auto customer : customers)
+//        if (customer != nullptr) {
+//            delete customer;
+//            customer = nullptr;
+//        }
+//    customers.clear();
 };
 
 OpenTable::OpenTable(const OpenTable& other) : tableId(other.tableId)
@@ -137,6 +131,21 @@ OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId)
         }
     }
 
+};
+
+void OpenTable::setCustomers(const std::vector<Table*>& tables)
+{
+    int size = tables.size();
+    for (int i = 0; i < size ; ++i) {
+        if (i == tableId)
+        {
+            for ( auto customer : (tables.at(i)->getCustomers()))
+            {
+                customers.push_back(customer);
+            }
+
+        }
+    }
 };
 
 

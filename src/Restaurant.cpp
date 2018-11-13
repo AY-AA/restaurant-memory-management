@@ -300,7 +300,13 @@ Restaurant::Restaurant(const Restaurant& other):open(other.open),menu(other.menu
     }
     size = other.actionsLog.size();
     for (int i = 0; i < size; ++i) {
-        actionsLog.push_back(other.actionsLog.at(i)->clone());
+        BaseAction* currAction = other.actionsLog.at(i)->clone();
+        // if instanceof openTable , set customers
+        if (dynamic_cast<OpenTable*>(currAction)){
+            ((OpenTable*)currAction)->setCustomers(tables);
+        }
+        actionsLog.push_back(currAction);
+
     }
 };
 

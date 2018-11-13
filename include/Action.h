@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "Customer.h"
+#include "Table.h"
 
 
 
@@ -43,11 +44,13 @@ public:
     virtual ~OpenTable();
     OpenTable(const OpenTable& other);
     OpenTable(OpenTable&& other);
+    void setCustomers(const std::vector<Table*>& tables);
 
 private:
     const int tableId;
     std::vector<Customer *> customers;
     bool _cloned;
+    std::string _arguments;
 };
 
 
