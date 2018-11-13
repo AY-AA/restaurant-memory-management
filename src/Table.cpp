@@ -1,7 +1,3 @@
-//
-// Created by avishai on 11/5/18.
-//
-
 #include <iostream>
 #include "../include/Customer.h"
 #include <vector>
@@ -65,7 +61,6 @@ std::vector<OrderPair> &Table::getOrders() {
 };
 
 
-//TODO : save the orders
 void Table::order(const std::vector<Dish> &menu) {
     for (auto customer: customersList) {
 //        Customer* currCustomer = customer;
@@ -81,7 +76,6 @@ void Table::openTable(){
     open = true;
 };
 
-//Todo: Needs to check if erase method is working properly, memory wise.
 void Table::closeTable() {
     open = false;
     for (auto customer : customersList) {
@@ -170,7 +164,7 @@ Table& Table::operator=(Table&& other) {
     }
 
     return *this;
-}
+};
 
 Table* Table::clone() {
     Table* tableToClone = new Table(capacity);

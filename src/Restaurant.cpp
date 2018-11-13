@@ -23,7 +23,7 @@ void Restaurant::start()
         std::string userInput;
         std::getline(std::cin, userInput);
 
-        userInput.erase(userInput.find_last_not_of("\n\r\t")+1);
+        userInput.erase(userInput.find_last_not_of(" \n\r\t")+1);
         firstWord = userInput.substr(0, userInput.find(' '));
         std::vector<std::string> tableInstructions = parseInput(userInput);
 
@@ -138,7 +138,7 @@ int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId
     op->act(*this);
     actionsLog.push_back(op);
     return nextId;
-}
+};
 
 const std::vector<std::string> Restaurant::parseInput(std::string &str) {
     std::vector<std::string> v;
@@ -391,7 +391,7 @@ Restaurant& Restaurant::operator=(Restaurant&& other) {
         other.actionsLog.at(i) = nullptr;
     }
     return *this;
-}
+};
 
 void Restaurant::clearLogs()
 {

@@ -62,7 +62,7 @@ std::string VegetarianCustomer::toString() const
 
 VegetarianCustomer* VegetarianCustomer::clone(){
     return new VegetarianCustomer(*this);
-}
+};
 
 // Cheap Customer
 
@@ -93,11 +93,11 @@ std::string CheapCustomer::toString() const
     std::string ans;
     ans.append(getName() + "," + "chp");
     return ans;
-}
+};
 
 CheapCustomer* CheapCustomer::clone(){
     return new CheapCustomer(*this);
-}
+};
 
 
 // Spicy Customer
@@ -149,7 +149,7 @@ std::string SpicyCustomer::toString() const
 
 SpicyCustomer* SpicyCustomer::clone(){
     return new SpicyCustomer(*this);
-}
+};
 
 
 
@@ -232,4 +232,4 @@ int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
 
 AlchoholicCustomer* AlchoholicCustomer::clone(){
     return new AlchoholicCustomer(*this);
-}
+};

@@ -41,7 +41,7 @@ public:
     void act(Restaurant &restaurant);
     std::string toString() const;
     virtual OpenTable* clone();
-    virtual ~OpenTable();
+    virtual ~OpenTable() = default; // table is responsible of deleting customers
     OpenTable(const OpenTable& other);
     OpenTable(OpenTable&& other);
     void setCustomers(const std::vector<Table*>& tables);
@@ -49,7 +49,6 @@ public:
 private:
     const int tableId;
     std::vector<Customer *> customers;
-    bool _cloned;
     std::string _arguments;
 };
 

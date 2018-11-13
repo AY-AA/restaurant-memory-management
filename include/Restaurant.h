@@ -10,7 +10,7 @@
 
 class Restaurant {
 public:
-    Restaurant();
+    Restaurant() = default;
     Restaurant(const std::string &configFilePath);
     void start();
     int getNumOfTables() const;

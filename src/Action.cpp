@@ -1,7 +1,3 @@
-//
-// Created by alex on 11/5/18.
-//
-
 #include <iostream>
 #include <vector>
 #include "../include/Action.h"
@@ -43,7 +39,9 @@ std::string BaseAction::getErrorMsg() const
 
 // ------------------ OpenTable
 
-OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id),customers(customersList),_cloned (false){};
+OpenTable::OpenTable(int id, std::vector<Customer *> &customersList) :
+tableId(id) , customers(customersList)
+{};
 
 void OpenTable::act(Restaurant &restaurant)
 {
@@ -68,7 +66,7 @@ void OpenTable::act(Restaurant &restaurant)
         std::cout<< getErrorMsg() << std::endl;
 
     }
-}
+};
 
 std::string OpenTable::toString() const{
     std::string msg("open " + std::to_string(tableId ) + " ");
@@ -85,7 +83,7 @@ std::string OpenTable::toString() const{
         msg.append("Pending");
     }
     return msg;
-}
+};
 
 OpenTable* OpenTable::clone(){
     std::vector<Customer *> toClone;
@@ -98,21 +96,8 @@ OpenTable* OpenTable::clone(){
     {
         opToClone->error(getErrorMsg());
     }
-//    opToClone->_cloned = true;
     opToClone-> _arguments = _arguments;
     return opToClone;
-};
-
-OpenTable::~OpenTable()
-{
-//    if (!_cloned) //table is responsible for deletion in this case
-//        return;
-//    for (auto customer : customers)
-//        if (customer != nullptr) {
-//            delete customer;
-//            customer = nullptr;
-//        }
-//    customers.clear();
 };
 
 OpenTable::OpenTable(const OpenTable& other) : tableId(other.tableId)
@@ -253,7 +238,7 @@ std::string MoveCustomer::toString() const{
         msg.append("Pending");
     }
     return msg;
-}
+};
 
 MoveCustomer* MoveCustomer::clone(){
     MoveCustomer* moveCustomer = new MoveCustomer(srcTable,dstTable,id);
