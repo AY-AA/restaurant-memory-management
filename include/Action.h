@@ -43,8 +43,6 @@ public:
     virtual ~OpenTable();
     OpenTable(const OpenTable& other);
     OpenTable(OpenTable&& other);
-    OpenTable& operator=(OpenTable&& other);
-//    void setCloned(const std::vector<Customer*> &customersList);
 
 private:
     const int tableId;

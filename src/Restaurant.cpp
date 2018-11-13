@@ -30,7 +30,7 @@ void Restaurant::start()
         if (firstWord == "open") {
             nextId = openTable(tableInstructions,nextId);
             //if an error occurred, reduce the number of illegal customers that were added
-            if (actionsLog.at(actionsLog.size()-1)->getStatus() == ActionStatus::ERROR && nextId != -1)
+            if (actionsLog.at(actionsLog.size()-1)->getStatus() == ActionStatus::ERROR)
                 nextId =nextId - (tableInstructions.size() - 2);
         }
         else if(firstWord == "order"){
@@ -106,13 +106,13 @@ int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId
     int tableId = std::stoi(tableInstructions.at(1));
     std::vector<Customer *> customersToAdd;
 
-    //table is open
-    if (tables.at(tableId)->isOpen()) {
-        OpenTable *op = new OpenTable(tableId, customersToAdd);
-        op->act(*this);
-        actionsLog.push_back(op);
-        return -1;
-    }
+//    //table is open
+//    if (tables.at(tableId)->isOpen()) {
+//        OpenTable *op = new OpenTable(tableId, customersToAdd);
+//        op->act(*this);
+//        actionsLog.push_back(op);
+//        return -1;
+//    }
     std::string name;
     std::string type;
     int tableIstructionsLength = tableInstructions.size();
@@ -135,7 +135,6 @@ int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId
         customersToAdd.push_back(toAdd);
     }
     OpenTable* op = new OpenTable(tableId, customersToAdd);
-
     op->act(*this);
     actionsLog.push_back(op);
     return nextId;

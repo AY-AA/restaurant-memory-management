@@ -45,7 +45,8 @@ std::string BaseAction::getErrorMsg() const
 
 OpenTable::OpenTable(int id, std::vector<Customer *> &customersList):tableId(id),customers(customersList),_cloned (false){};
 
-void OpenTable::act(Restaurant &restaurant){
+void OpenTable::act(Restaurant &restaurant)
+{
     Table* tableToOpen = restaurant.getTable(tableId);
     int numOfCustomer = customers.size();
     if(tableToOpen->getCapacity() >= numOfCustomer && !(tableToOpen->isOpen())) {
@@ -56,11 +57,19 @@ void OpenTable::act(Restaurant &restaurant){
         complete();
     }
     else{
-        error("Table does not exist or is already open");
-        std::cout<< toString()<< std::endl;
+        //TODO :: 1. get customers, copy arguments, delete them
+        std::string msg;
+        for (auto customer: customers) {
+            msg.append(customer->toString() + " ");
+            delete customer;
+            customer = nullptr;
+        }
+        customers.clear();
+        error(msg + "Error: Table does not exist or is already open");
+        std::cout<< "Error: Table does not exist or is already open" << std::endl;
+
     }
 }
-
 
 std::string OpenTable::toString() const{
     std::string msg("open " + std::to_string(tableId ) + " ");
@@ -73,7 +82,6 @@ std::string OpenTable::toString() const{
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append("Error: ");
         msg.append(getErrorMsg());
     }
     else
@@ -82,20 +90,28 @@ std::string OpenTable::toString() const{
     }
     return msg;
 }
-//TODO : FIX MEMORY LEAK
+
 OpenTable* OpenTable::clone(){
     std::vector<Customer *> toClone;
     for (auto customer : customers) {
         toClone.push_back(customer->clone());
     }
     OpenTable* opToClone = new OpenTable(tableId,toClone);
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        opToClone->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        opToClone->error(getErrorMsg());
+    }
     opToClone->_cloned = true;
     return opToClone;
 };
 
 OpenTable::~OpenTable()
 {
-    if (!_cloned)
+    if (!_cloned) //table is responsible for deletion in this case
         return;
     for (auto customer : customers)
         if (customer != nullptr) {
@@ -148,8 +164,8 @@ void Order::act(Restaurant &restaurant)
     }
     else
     {
-        this->error("Table does not exist or is not open");
-        std::cout << toString() << std::endl;
+        this->error("Error: Table does not exist or is not open");
+        std::cout << getErrorMsg() << std::endl;
     }
 };
 
@@ -163,7 +179,6 @@ std::string Order::toString() const
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append("Error: ");
         msg.append(getErrorMsg());
     }
     else
@@ -174,7 +189,16 @@ std::string Order::toString() const
 };
 
 Order* Order::clone(){
-    return new Order(tableId);
+    Order* newOrder = new Order(tableId);
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        newOrder->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        newOrder->error(getErrorMsg());
+    }
+    return newOrder;
 };
 
 
@@ -200,8 +224,8 @@ void MoveCustomer::act(Restaurant &restaurant) {
         complete();
     }
     else{
-        error("Cannot move customer") ;
-        std::cout << toString() << std::endl;
+        error("Error: Cannot move customer") ;
+        std::cout << getErrorMsg() << std::endl;
     }
 };
 
@@ -213,7 +237,6 @@ std::string MoveCustomer::toString() const{
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append("Error: ");
         msg.append(getErrorMsg());
     }
     else
@@ -224,7 +247,16 @@ std::string MoveCustomer::toString() const{
 }
 
 MoveCustomer* MoveCustomer::clone(){
-    return new MoveCustomer(srcTable,dstTable,id);
+    MoveCustomer* moveCustomer = new MoveCustomer(srcTable,dstTable,id);
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        moveCustomer->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        moveCustomer->error(getErrorMsg());
+    }
+    return moveCustomer;
 };
 
 // ------------------ Close
@@ -241,8 +273,8 @@ void Close::act(Restaurant &restaurant) {
         complete();
     }
     else{
-        error("Table does not exist or is not open");
-        std::cout<< toString() << std::endl;
+        error("Error: Table does not exist or is not open");
+        std::cout<< getErrorMsg() << std::endl;
     }
 };
 
@@ -254,7 +286,6 @@ std::string Close::toString() const{
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append("Error: ");
         msg.append(getErrorMsg());
     }
     else
@@ -265,7 +296,16 @@ std::string Close::toString() const{
 };
 
 Close* Close::clone(){
-    return new Close(tableId);
+    Close* close = new Close(tableId);
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        close->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        close->error(getErrorMsg());
+    }
+    return close;
 };
 
 
@@ -297,14 +337,19 @@ std::string CloseAll::toString() const
     }
     else
     {
-        msg.append("Error: ");
         msg.append("Pending");
     }
     return msg;
 };
 
-CloseAll* CloseAll::clone(){
-    return new CloseAll();
+CloseAll* CloseAll::clone()
+{
+    CloseAll* close = new CloseAll();
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        close->complete();
+    }
+    return close;
 };
 
 // ------------------ PrintMenu
@@ -333,7 +378,12 @@ std::string PrintMenu::toString() const {
 };
 
 PrintMenu* PrintMenu::clone(){
-    return new PrintMenu();
+    PrintMenu* printMenu = new PrintMenu();
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        printMenu->complete();
+    }
+    return printMenu;
 };
 
 // ------------------ PrintTableStatus
@@ -380,7 +430,12 @@ std::string PrintTableStatus::toString() const
 };
 
 PrintTableStatus* PrintTableStatus::clone(){
-    return new PrintTableStatus(tableId);
+    PrintTableStatus* printTableStatus = new PrintTableStatus(tableId);
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        printTableStatus->complete();
+    }
+    return printTableStatus;
 };
 
 
@@ -410,8 +465,14 @@ std::string PrintActionsLog::toString() const
     return msg;
 };
 
-PrintActionsLog* PrintActionsLog::clone(){
-    return new PrintActionsLog();
+PrintActionsLog* PrintActionsLog::clone()
+{
+    PrintActionsLog* printActionsLog = new PrintActionsLog();
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        printActionsLog->complete();
+    }
+    return printActionsLog;
 };
 
 
@@ -424,7 +485,6 @@ void BackupRestaurant::act(Restaurant &restaurant)
     if(backup != nullptr) {
         delete(backup);
     }
-    //TODO : TRY back up restaurat
     backup = new Restaurant(restaurant);
     complete();
 
@@ -444,8 +504,18 @@ std::string BackupRestaurant::toString() const
     return msg;
 };
 
-BackupRestaurant* BackupRestaurant::clone(){
-    return new BackupRestaurant();
+BackupRestaurant* BackupRestaurant::clone()
+{
+    BackupRestaurant* backupRestaurant = new BackupRestaurant();
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        backupRestaurant->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        backupRestaurant->error(getErrorMsg());
+    }
+    return backupRestaurant;
 };
 
 // ------------------ RestoreRestaurant
@@ -456,8 +526,8 @@ void RestoreResturant::act(Restaurant &restaurant)
 {
     if (backup == nullptr)
     {
-        error("No backup available");
-        std::cout << toString() << std::endl;
+        error("Error: No backup available");
+        std::cout << getErrorMsg() << std::endl;
         return;
     }
     restaurant = *backup;
@@ -473,7 +543,6 @@ std::string RestoreResturant::toString() const
     }
     else if (getStatus() == ActionStatus::ERROR)
     {
-        msg.append("Error: ");
         msg.append(getErrorMsg());
     }
     else
@@ -484,5 +553,14 @@ std::string RestoreResturant::toString() const
 };
 
 RestoreResturant* RestoreResturant::clone(){
-    return new RestoreResturant();
+    RestoreResturant* restoreResturant = new RestoreResturant();
+    if (getStatus() == ActionStatus::COMPLETED)
+    {
+        restoreResturant->complete();
+    }
+    else if (getStatus() == ActionStatus::ERROR)
+    {
+        restoreResturant->error(getErrorMsg());
+    }
+    return restoreResturant;
 };
