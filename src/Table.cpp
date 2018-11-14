@@ -1,24 +1,22 @@
 #include <iostream>
-#include "../include/Customer.h"
 #include <vector>
 #include "../include/Table.h"
-#include "../include/Dish.h"
 
+Table::Table(int t_capacity) :
+        capacity(t_capacity), open(false) , customersList(std::vector<Customer*>()) , orderList(std::vector<OrderPair>()){};
 
-Table::Table(int t_capacity) {
-    capacity = t_capacity;
-    open = false;
-};
-
-int Table::getCapacity() const {
+int Table::getCapacity() const
+{
     return capacity;
 };
 
-void Table::addCustomer(Customer *customer) {
+void Table::addCustomer(Customer *customer)
+{
     customersList.push_back(customer);
 };
 
-void Table::removeCustomer(int id) {
+void Table::removeCustomer(int id)
+{
     if (!customersList.empty()) {
         int numOfCustomers = customersList.size();
         for (int i = 0; i < numOfCustomers; ++i) {
@@ -39,11 +37,12 @@ void Table::removeCustomer(int id) {
         orderList = std::move(newOrdersList);
     }
     if(customersList.empty()){
-      open = false;
+        open = false;
     };
 };
 
-Customer *Table::getCustomer(int id) {
+Customer *Table::getCustomer(int id)
+{
     for (auto customer : customersList) {
         if (customer->getId() == id) {
             return customer;
@@ -52,16 +51,18 @@ Customer *Table::getCustomer(int id) {
     return nullptr;
 };
 
-std::vector<Customer *> &Table::getCustomers() {
+std::vector<Customer *> &Table::getCustomers()
+{
     return  customersList;
 };
 
-std::vector<OrderPair> &Table::getOrders() {
+std::vector<OrderPair> &Table::getOrders()
+{
     return orderList;
 };
 
-
-void Table::order(const std::vector<Dish> &menu) {
+void Table::order(const std::vector<Dish> &menu)
+{
     for (auto customer: customersList) {
 //        Customer* currCustomer = customer;
         std::vector<int> orders = customer->order(menu);
@@ -72,11 +73,13 @@ void Table::order(const std::vector<Dish> &menu) {
     }
 };
 
-void Table::openTable(){
+void Table::openTable()
+{
     open = true;
 };
 
-void Table::closeTable() {
+void Table::closeTable()
+{
     open = false;
     for (auto customer : customersList) {
         if (customer != nullptr)
@@ -86,7 +89,8 @@ void Table::closeTable() {
     customersList.clear();
 };
 
-int Table::getBill() {
+int Table::getBill()
+{
     int billSum = 0;
     for (auto order : orderList) {
         billSum += order.second.getPrice();
@@ -94,12 +98,13 @@ int Table::getBill() {
     return billSum;
 };
 
-bool Table::isOpen() {
+bool Table::isOpen()
+{
     return open;
 };
 
-
-Table::~Table(){
+Table::~Table()
+{
     for (auto customer: customersList) {
         if (customer != nullptr) {
             delete customer;
@@ -108,7 +113,9 @@ Table::~Table(){
     customersList.clear();
 };
 
-Table::Table(const Table& other):capacity(other.capacity),open(other.open),orderList(other.orderList) {
+Table::Table(const Table& other):
+        capacity(other.capacity),open(other.open),customersList(std::vector<Customer*>()),orderList(other.orderList)
+{
     int numOfCustomers = other.customersList.size();
     for (int i = 0; i < numOfCustomers; ++i) {
         customersList.push_back(other.customersList.at(i)->clone());
@@ -132,7 +139,8 @@ Table& Table::operator=(const Table &other) {
     return *this;
 };
 
-Table::Table(Table&& other):capacity(other.capacity),open(other.open),customersList(other.customersList),orderList(other.orderList){
+Table::Table(Table&& other):capacity(other.capacity),open(other.open),customersList(other.customersList),orderList(other.orderList)
+{
     int numOfCustomers = other.customersList.size();
     for (int i = 0; i < numOfCustomers; i++) {
         if (other.customersList.at(i) != nullptr)
@@ -143,7 +151,8 @@ Table::Table(Table&& other):capacity(other.capacity),open(other.open),customersL
     }
 };
 
-Table& Table::operator=(Table&& other) {
+Table& Table::operator=(Table&& other)
+{
     for (auto customer : customersList) {
         if (customer != nullptr)
         {
@@ -166,7 +175,8 @@ Table& Table::operator=(Table&& other) {
     return *this;
 };
 
-Table* Table::clone() {
+Table* Table::clone()
+{
     Table* tableToClone = new Table(capacity);
     tableToClone->orderList = std::vector<OrderPair>(orderList);
     tableToClone->open = open;

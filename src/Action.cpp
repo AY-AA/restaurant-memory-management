@@ -1,11 +1,10 @@
 #include <iostream>
 #include <vector>
 #include "../include/Action.h"
-#include "../include/Table.h"
 #include "../include/Restaurant.h"
-#include "../include/Dish.h"
 
 extern Restaurant* backup;
+
 
 // ------------------ BaseAction
 
@@ -36,12 +35,13 @@ std::string BaseAction::getErrorMsg() const
 };
 
 
-
 // ------------------ OpenTable
 
 OpenTable::OpenTable(int id, std::vector<Customer *> &customersList) :
-tableId(id) , customers(customersList)
-{};
+        tableId(id) , customers(std::vector<Customer *>()),_arguments("")
+{
+    customers = customersList;
+};
 
 void OpenTable::act(Restaurant &restaurant)
 {
@@ -68,7 +68,8 @@ void OpenTable::act(Restaurant &restaurant)
     }
 };
 
-std::string OpenTable::toString() const{
+std::string OpenTable::toString() const
+{
     std::string msg("open " + std::to_string(tableId ) + " ");
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -85,7 +86,8 @@ std::string OpenTable::toString() const{
     return msg;
 };
 
-OpenTable* OpenTable::clone(){
+OpenTable* OpenTable::clone()
+{
     std::vector<Customer *> toClone;
     OpenTable* opToClone = new OpenTable(tableId,toClone);
     if (getStatus() == ActionStatus::COMPLETED)
@@ -100,13 +102,15 @@ OpenTable* OpenTable::clone(){
     return opToClone;
 };
 
-OpenTable::OpenTable(const OpenTable& other) : tableId(other.tableId)
+OpenTable::OpenTable(const OpenTable& other) :
+        tableId(other.tableId) , customers(std::vector<Customer *>()), _arguments("")
 {
     for (auto customer : other.customers)
         customers.push_back(customer->clone());
 };
 
-OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId)
+OpenTable::OpenTable(OpenTable&& other) :
+        tableId(other.tableId) ,  customers(std::vector<Customer *>()), _arguments("")
 {
     for (auto customer : other.customers) {
         if (customer != nullptr) {
@@ -115,7 +119,6 @@ OpenTable::OpenTable(OpenTable&& other) : tableId(other.tableId)
             customer = nullptr;
         }
     }
-
 };
 
 void OpenTable::setCustomers(const std::vector<Table*>& tables)
@@ -128,7 +131,6 @@ void OpenTable::setCustomers(const std::vector<Table*>& tables)
             {
                 customers.push_back(customer);
             }
-
         }
     }
 };
@@ -182,7 +184,8 @@ std::string Order::toString() const
     return msg;
 };
 
-Order* Order::clone(){
+Order* Order::clone()
+{
     Order* newOrder = new Order(tableId);
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -200,7 +203,8 @@ Order* Order::clone(){
 
 MoveCustomer::MoveCustomer(int src, int dst, int customerId) : srcTable(src), dstTable(dst), id(customerId) {};
 
-void MoveCustomer::act(Restaurant &restaurant) {
+void MoveCustomer::act(Restaurant &restaurant)
+{
     Table* srcT = restaurant.getTable(srcTable);
     Table* dstT = restaurant.getTable(dstTable);
     std::vector<OrderPair> &srcOrders = srcT->getOrders();
@@ -223,7 +227,8 @@ void MoveCustomer::act(Restaurant &restaurant) {
     }
 };
 
-std::string MoveCustomer::toString() const{
+std::string MoveCustomer::toString() const
+{
     std::string msg("move " + std::to_string(srcTable) + " " + std::to_string(dstTable) + " " + std::to_string(id) + " ");
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -240,7 +245,8 @@ std::string MoveCustomer::toString() const{
     return msg;
 };
 
-MoveCustomer* MoveCustomer::clone(){
+MoveCustomer* MoveCustomer::clone()
+{
     MoveCustomer* moveCustomer = new MoveCustomer(srcTable,dstTable,id);
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -253,11 +259,13 @@ MoveCustomer* MoveCustomer::clone(){
     return moveCustomer;
 };
 
+
 // ------------------ Close
 
 Close::Close(int id):tableId(id) {};
 
-void Close::act(Restaurant &restaurant) {
+void Close::act(Restaurant &restaurant)
+{
     Table* tableToClose = restaurant.getTable(tableId);
     if(tableToClose != nullptr && tableToClose->isOpen()){
         std::string stat = "Table " + std::to_string(tableId) + " was closed. ";
@@ -272,7 +280,8 @@ void Close::act(Restaurant &restaurant) {
     }
 };
 
-std::string Close::toString() const{
+std::string Close::toString() const
+{
     std::string msg("close " + std::to_string(tableId) + " ");
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -289,7 +298,8 @@ std::string Close::toString() const{
     return msg;
 };
 
-Close* Close::clone(){
+Close* Close::clone()
+{
     Close* close = new Close(tableId);
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -307,7 +317,8 @@ Close* Close::clone(){
 
 CloseAll::CloseAll() = default;
 
-void CloseAll::act(Restaurant &restaurant) {
+void CloseAll::act(Restaurant &restaurant)
+{
     int restCapacity = restaurant.getNumOfTables();
     for (int i = 0; i < restCapacity; ++i) {
         Table* currTable = restaurant.getTable(i);
@@ -346,11 +357,13 @@ CloseAll* CloseAll::clone()
     return close;
 };
 
+
 // ------------------ PrintMenu
 
 PrintMenu::PrintMenu() = default;
 
-void PrintMenu::act(Restaurant &restaurant) {
+void PrintMenu::act(Restaurant &restaurant)
+{
     std::vector<Dish> menu = restaurant.getMenu();
     for (const auto &dish : menu) {
         std:: cout << dish.toString() << std::endl;
@@ -358,7 +371,8 @@ void PrintMenu::act(Restaurant &restaurant) {
     complete();
 };
 
-std::string PrintMenu::toString() const {
+std::string PrintMenu::toString() const
+{
     std::string msg("menu " );
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -371,7 +385,8 @@ std::string PrintMenu::toString() const {
     return msg;
 };
 
-PrintMenu* PrintMenu::clone(){
+PrintMenu* PrintMenu::clone()
+{
     PrintMenu* printMenu = new PrintMenu();
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -380,11 +395,13 @@ PrintMenu* PrintMenu::clone(){
     return printMenu;
 };
 
+
 // ------------------ PrintTableStatus
 
 PrintTableStatus::PrintTableStatus(int id): tableId(id) {};
 
-void PrintTableStatus::act(Restaurant &restaurant) {
+void PrintTableStatus::act(Restaurant &restaurant)
+{
     Table* tableToPrint = restaurant.getTable(tableId);
     if(tableToPrint == nullptr){
         return;
@@ -423,7 +440,8 @@ std::string PrintTableStatus::toString() const
     return msg;
 };
 
-PrintTableStatus* PrintTableStatus::clone(){
+PrintTableStatus* PrintTableStatus::clone()
+{
     PrintTableStatus* printTableStatus = new PrintTableStatus(tableId);
     if (getStatus() == ActionStatus::COMPLETED)
     {
@@ -437,7 +455,8 @@ PrintTableStatus* PrintTableStatus::clone(){
 
 PrintActionsLog::PrintActionsLog() = default;
 
-void PrintActionsLog::act(Restaurant &restaurant) {
+void PrintActionsLog::act(Restaurant &restaurant)
+{
     std::vector<BaseAction*> actsLog = restaurant.getActionsLog();
     for (auto action : actsLog) {
         std::cout << action->toString() << std::endl;
@@ -512,6 +531,7 @@ BackupRestaurant* BackupRestaurant::clone()
     return backupRestaurant;
 };
 
+
 // ------------------ RestoreRestaurant
 
 RestoreResturant::RestoreResturant() = default;
@@ -546,7 +566,8 @@ std::string RestoreResturant::toString() const
     return msg;
 };
 
-RestoreResturant* RestoreResturant::clone(){
+RestoreResturant* RestoreResturant::clone()
+{
     RestoreResturant* restoreResturant = new RestoreResturant();
     if (getStatus() == ActionStatus::COMPLETED)
     {

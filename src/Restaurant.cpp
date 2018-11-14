@@ -3,10 +3,10 @@
 #include <vector>
 #include <sstream>
 #include "../include/Restaurant.h"
-#include "../include/Table.h"
 
 
-Restaurant::Restaurant(const std::string &configFilePath):open(true),tables(),menu(),actionsLog()
+Restaurant::Restaurant(const std::string &configFilePath):
+        open(true),tables(std::vector<Table*>()),menu(std::vector<Dish>()),actionsLog( std::vector<BaseAction*>())
 {
     readFile(configFilePath);
 };
@@ -22,7 +22,7 @@ void Restaurant::start()
     do{
         std::string userInput;
         std::getline(std::cin, userInput);
-
+        //removes unnecessary spaces
         userInput.erase(userInput.find_last_not_of(" \n\r\t")+1);
         firstWord = userInput.substr(0, userInput.find(' '));
         std::vector<std::string> tableInstructions = parseInput(userInput);
@@ -105,14 +105,6 @@ int Restaurant::openTable(std::vector<std::string>  tableInstructions,int nextId
 {
     int tableId = std::stoi(tableInstructions.at(1));
     std::vector<Customer *> customersToAdd;
-
-//    //table is open
-//    if (tables.at(tableId)->isOpen()) {
-//        OpenTable *op = new OpenTable(tableId, customersToAdd);
-//        op->act(*this);
-//        actionsLog.push_back(op);
-//        return -1;
-//    }
     std::string name;
     std::string type;
     int tableIstructionsLength = tableInstructions.size();
@@ -163,7 +155,8 @@ int Restaurant::getNumOfTables() const
     return tables.size();
 };
 
-Table* Restaurant::getTable(int ind){
+Table* Restaurant::getTable(int ind)
+{
     int numOfTables = tables.size();
     if (ind > numOfTables)
         return nullptr;
@@ -292,7 +285,8 @@ Restaurant::~Restaurant()
     clearTables();
 };
 
-Restaurant::Restaurant(const Restaurant& other):open(other.open),menu(other.menu)
+Restaurant::Restaurant(const Restaurant& other):
+        open(other.open),tables(std::vector<Table*>()),menu(other.menu),actionsLog(std::vector<BaseAction*>())
 {
     int size = other.tables.size();
     for (int i = 0; i < size; ++i) {

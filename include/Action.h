@@ -7,8 +7,6 @@
 #include "Table.h"
 
 
-
-
 enum ActionStatus{
     PENDING, COMPLETED, ERROR
 };

@@ -1,9 +1,6 @@
 #include <iostream>
 #include <vector>
 #include "../include/Customer.h"
-#include "../include/Dish.h"
-
-
 
 Customer::Customer(std::string c_name, int c_id) :  name (c_name), id(c_id) {};
 
@@ -63,6 +60,7 @@ std::string VegetarianCustomer::toString() const
 VegetarianCustomer* VegetarianCustomer::clone(){
     return new VegetarianCustomer(*this);
 };
+
 
 // Cheap Customer
 
@@ -147,14 +145,13 @@ std::string SpicyCustomer::toString() const
     return ans;
 };
 
-SpicyCustomer* SpicyCustomer::clone(){
+SpicyCustomer* SpicyCustomer::clone()
+{
     return new SpicyCustomer(*this);
 };
 
 
-
 // Alcoholic Customer
-
 
 AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id), _ordered(false), _canOrder(true), _alcPrice(-1)
 {};
@@ -229,7 +226,7 @@ int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
     return index;
 };
 
-
-AlchoholicCustomer* AlchoholicCustomer::clone(){
+AlchoholicCustomer* AlchoholicCustomer::clone()
+{
     return new AlchoholicCustomer(*this);
 };
