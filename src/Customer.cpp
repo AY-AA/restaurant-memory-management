@@ -153,7 +153,7 @@ SpicyCustomer* SpicyCustomer::clone()
 
 // Alcoholic Customer
 
-AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id), _ordered(false), _canOrder(true), _alcPrice(-1)
+AlchoholicCustomer::AlchoholicCustomer(std::string name, int id) : Customer(name,id), _ordered(false), _canOrder(true), _alcPrice(-1), _alcId(-1)
 {};
 
 std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //orders cheapest alcoholic beverage and then next expensive till there are no more
@@ -161,7 +161,7 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //or
     std::vector<int> ans;
     int orderID = -1;
     int orderPrice = -1;
-    //orders dish
+    //first order
     if (!_ordered) {
         for (auto dish : menu) {
             if (dish.getType() == DishType::ALC && (orderPrice > dish.getPrice() || orderID == -1))
@@ -171,11 +171,12 @@ std::vector<int> AlchoholicCustomer::order(const std::vector<Dish> &menu)   //or
             }
         }
         _alcPrice = orderPrice;
+        _alcId = orderID;
         _ordered = true;
         ans.push_back(orderID);
     }
 
-        //orders beverage
+        //further orders
     else if (_canOrder)
     {
         orderID = findNextAlcoholicIndex(menu);
@@ -198,32 +199,39 @@ std::string AlchoholicCustomer::toString() const
 
 int AlchoholicCustomer::findNextAlcoholicIndex(const std::vector<Dish> &menu)
 {
-    int index = -1;
     int nextPrice = _alcPrice;
+    int nextId = -1;
     bool found = false;
     for (auto dish : menu)
     {
         int currID = dish.getId();
         int currPrice = dish.getPrice();
-        if (dish.getType() == DishType::ALC)
+        if (!(dish.getType() == DishType::ALC))
         {
-            if (!found && nextPrice < currPrice)
-            {
-                index = currID;
-                nextPrice = currPrice;
-                found = true;
-            }
-            else if (found && nextPrice > currPrice && currPrice > _alcPrice)
-            {
-                index = currID;
-                nextPrice = currPrice;
-            }
+            continue;
+        }
+        if (_alcPrice == currPrice && currID > _alcId)
+        {
+            _alcId = currID;
+            return currID;
+        }
+        if (!found && nextPrice < currPrice)
+        {
+            nextId = currID;
+            nextPrice = currPrice;
+            found = true;
+        }
+        else if (found && nextPrice > currPrice && currPrice > _alcPrice)
+        {
+            nextId = currID;
+            nextPrice = currPrice;
         }
     }
-    if(index != -1){
+    if(nextId != -1){
         _alcPrice = nextPrice;
+        _alcId = nextId;
     }
-    return index;
+    return nextId;
 };
 
 AlchoholicCustomer* AlchoholicCustomer::clone()

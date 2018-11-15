@@ -71,7 +71,7 @@ private:
     bool _ordered;
     bool _canOrder;
     int _alcPrice;
-
+    int _alcId;
     int findNextAlcoholicIndex(const std::vector<Dish> &menu);
 };
 
