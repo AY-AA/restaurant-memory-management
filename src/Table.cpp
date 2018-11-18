@@ -67,6 +67,8 @@ void Table::order(const std::vector<Dish> &menu)
 //        Customer* currCustomer = customer;
         std::vector<int> orders = customer->order(menu);
         for (auto order : orders) {
+            if (order == -1)
+                continue;
             OrderPair x(customer->getId(), menu.at(order));
             orderList.push_back(x);
         }

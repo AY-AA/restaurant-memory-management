@@ -35,7 +35,7 @@ std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //or
     {
         ans.push_back(dishID);
     }
-
+    dishID = -1;
     // finding beverage
     for (auto dish : menu) {
         if (dish.getType() == DishType::BVG && (bvgPrice < dish.getPrice() || dishID == -1))
@@ -46,7 +46,9 @@ std::vector<int> VegetarianCustomer::order(const std::vector<Dish> &menu)   //or
     }
     if (bvgPrice != -1)
         ans.push_back(dishID);
-
+    if (ans.size() == 2)
+        return ans;
+    ans.clear();
     return ans;
 };
 
@@ -115,14 +117,13 @@ std::vector<int> SpicyCustomer::order(const std::vector<Dish> &menu)    //orders
             {
                 price = dish.getPrice();
                 orderID = dish.getId();
+                _ordered = true;
             }
-
         }
-        _ordered = true;
     }
 
-        //orders beverage
-    else
+    //orders beverage
+    else if (_ordered)
     {
         for (auto dish : menu) {
             if (dish.getType() == DishType::BVG && (price > dish.getPrice() || orderID == -1))

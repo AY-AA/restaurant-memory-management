@@ -366,7 +366,7 @@ void PrintMenu::act(Restaurant &restaurant)
 {
     std::vector<Dish> menu = restaurant.getMenu();
     for (const auto &dish : menu) {
-        std:: cout << dish.toString() << std::endl;
+        std:: cout << dish.toString() << "NIS" << std::endl;
     }
     complete();
 };
