@@ -193,7 +193,7 @@ void Restaurant::readFile(const std::string &configFilePath)
 
 int Restaurant::parseLine(const std::string &currLine, int caseNumber)
 {
-    if (currLine.at(0) == '#')
+    if (currLine.empty() || currLine.at(0) == '#')
     {
         return caseNumber;
     }

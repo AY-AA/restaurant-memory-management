@@ -1,18 +1,10 @@
-#Config file 2
 #number of tables
-6
+4
 #tables description
-6,4,4,14,10,10
+8,8,8,8
 #Menu
-Butterbeer1,ALC,50
-Butterbeer2,ALC,50
-Butterbeer3,ALC,50
-Butterbeer4,ALC,50
-Butterbeer5,ALC,50
-Fire Whisky,ALC,40
-Honey Wine,ALC,80
-Honey Wine2,ALC,30
-Water,BVG,20
-Pumpkin juice,BVG,40
-Pumpkin cake,VEG,50
-Spicy meat,SPC,300
+Beer,ALC,50
+Water,BVG,55
+Soda,BVG,45
+Vodka,ALC,50
+Coca Cola,BVG,55
