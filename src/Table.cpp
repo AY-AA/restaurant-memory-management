@@ -1,229 +1,146 @@
-#include <iostream>
 #include <vector>
+#include "../include/Customer.h"
+#include "../include/Dish.h"
 #include "../include/Table.h"
+using namespace std;
 
-Table::Table(int t_capacity) :
-        capacity(t_capacity), open(false) , customersList(std::vector<Customer*>()) , orderList(std::vector<OrderPair>()){};
+Table::Table(int t_capacity):capacity(t_capacity), open(false) {}
 
 int Table::getCapacity() const
 {
+
     return capacity;
-};
+}
 
-void Table::addCustomer(Customer *customer)
+Table::Table(const Table &table)
 {
-    customersList.push_back(customer);
-};
-
-void Table::removeCustomer(int id)
-{
-    if (!customersList.empty()) {
-        int numOfCustomers = customersList.size();
-        for (int i = 0; i < numOfCustomers; ++i) {
-            if (customersList.at(i)->getId() == id){
-                customersList.erase((customersList.begin() + i));
-                numOfCustomers--;
-            }
-        }
+    capacity = table.capacity;
+    open = table.open;
+    num_of_orders = table.num_of_orders;
+    for(unsigned int i = 0 ; i < table.customersList.size() ; i ++)
+    {
+        customersList.push_back(table.customersList[i]->clone());
     }
-    if(!orderList.empty()) {
-        std::vector<OrderPair> newOrdersList;
-        int numOfOrders = orderList.size();
-        for(int i=0;i < numOfOrders;i++){
-            if(!(orderList.at(i).first == id)){
-                newOrdersList.push_back(orderList.at(i));
-            }
-        }
-        orderList = std::move(newOrdersList);
+    for (unsigned int i = 0; i < table.orderList.size(); i++)
+    {
+        orderList.emplace_back(table.orderList[i].first , table.orderList[i].second);
     }
-    if(customersList.empty()){
-        open = false;
-    };
-};
-
-Customer *Table::getCustomer(int id)
-{
-    for (auto customer : customersList) {
-        if (customer->getId() == id) {
-            return customer;
-        }
-    }
-    return nullptr;
-};
-
-std::vector<Customer *> &Table::getCustomers()
-{
-    return  customersList;
-};
-
-std::vector<OrderPair> &Table::getOrders()
-{
-    return orderList;
-};
-
-void Table::order(const std::vector<Dish> &menu)
-{
-    for (auto customer: customersList) {
-//        Customer* currCustomer = customer;
-        std::vector<int> orders = customer->order(menu);
-        for (auto order : orders) {
-            if (order == -1)
-                continue;
-            OrderPair x(customer->getId(), menu.at(order));
-            orderList.push_back(x);
-        }
-    }
-};
-
-void Table::openTable()
-{
-    open = true;
-};
-
-void Table::closeTable()
-{
-    open = false;
-    for (auto customer : customersList) {
-        if (customer != nullptr)
-            delete customer;
-    }
-    orderList.clear();
-    customersList.clear();
-};
-
-int Table::getBill()
-{
-    int billSum = 0;
-    for (auto order : orderList) {
-        billSum += order.second.getPrice();
-    }
-    return billSum;
-};
-
-bool Table::isOpen()
-{
-    return open;
-};
+}
 
 Table::~Table()
 {
-    for (auto customer: customersList) {
-        if (customer != nullptr) {
-            delete customer;
-        }
+    for(unsigned int i = 0 ; i < customersList.size(); i ++)
+    {
+        delete(customersList[i]);
     }
     customersList.clear();
-};
-
-Table::Table(const Table& other):
-        capacity(other.capacity),open(other.open),customersList(std::vector<Customer*>()),orderList(other.orderList)
+    orderList.clear();
+}
+void Table::closetable2()
 {
-    int numOfCustomers = other.customersList.size();
-    for (int i = 0; i < numOfCustomers; ++i) {
-        customersList.push_back(other.customersList.at(i)->clone());
-    }
-};
+    for (unsigned int i = 0;i < customersList.size() ; i++)
+        delete(customersList[i]);
+    this->orderList.clear();
+    this->customersList.clear();
+    this->open = false;
+    this->num_of_orders = 0;
+}
 
-Table& Table::operator=(const Table &other) {
-    if(&other == this) {
-        return *this;
-    }
-    for (auto customer : customersList) {
-        delete(customer);
+Table & Table::operator = (const Table & tbl)
+{
+
+    capacity = tbl.capacity;
+    open = tbl.open;
+    num_of_orders = tbl.num_of_orders;
+
+    for(unsigned int i = 0 ; i < customersList.size() ; i ++)
+    {
+        delete (this->customersList[i]);
+
     }
     customersList.clear();
-    for (auto toAdd : other.customersList) {
-        customersList.push_back(toAdd->clone());
-    }
-    capacity = other.capacity;
-    open = other.open;
-    orderList = std::vector<OrderPair>(other.orderList);
+    this->getOrders().clear();
+
+    for(unsigned int i = 0 ; i < tbl.customersList.size(); i ++)
+        customersList.push_back(tbl.customersList[i]->clone());
+
+    for(unsigned int i = 0 ; i < tbl.orderList.size(); i ++)
+        orderList.emplace_back(tbl.orderList[i].first , tbl.orderList[i].second);
     return *this;
-};
+}
 
-Table::Table(Table&& other):capacity(other.capacity),open(other.open),customersList(other.customersList),orderList(other.orderList)
+void Table::addCustomer(Customer* customer)
 {
-    int numOfCustomers = other.customersList.size();
-    for (int i = 0; i < numOfCustomers; i++) {
-        if (other.customersList.at(i) != nullptr)
-        {
-            delete(other.customersList.at(i));
-        }
-        other.customersList.at(i) = nullptr;
-    }
-};
+    if (((int)(customersList).size()) < this->capacity)
+        (customersList).push_back(customer);
+}
 
-Table& Table::operator=(Table&& other)
+void Table::removeCustomer(int id){
+    for(unsigned int i=0;i<((customersList).size());i++)
+    {
+        if (customersList[i]->getId() == id)
+            customersList.erase(customersList.begin() + i);
+
+    }
+    //maybe we need to do here destructor for customer
+}
+Customer* Table:: getCustomer(int id)
 {
-    for (auto customer : customersList) {
-        if (customer != nullptr)
-        {
-            delete (customer);
-        }
-    }
-    customersList.clear();
-    for (auto toAdd : other.customersList) {
-        customersList.push_back(toAdd->clone());
-    }
-    int numOfCustomers = other.customersList.size();
-    for (int i = 0; i < numOfCustomers; ++i) {
-        if (other.customersList.at(i) != nullptr)
-        {
-            delete(other.customersList.at(i));
-        }
-        other.customersList.at(i) = nullptr;
+
+    for(unsigned int i = 0 ; i < ((customersList).size()) ; i++) {
+        if (customersList[i]->getId() == id)
+            return customersList[i];
     }
 
-    return *this;
-};
-
-Table* Table::clone()
+    return nullptr;
+}
+std::vector<Customer*>& Table:: getCustomers()
 {
-    Table* tableToClone = new Table(capacity);
-    tableToClone->orderList = std::vector<OrderPair>(orderList);
-    tableToClone->open = open;
-    for (auto customer : customersList){
-        tableToClone->addCustomer(customer->clone());
+    return customersList;
+
+}
+// get refrence of menu
+//           return 0orderpair (id customer, dish)
+
+void Table::order(const std::vector<Dish> &menu)
+{
+    for(unsigned int i = 0; i < customersList.size(); i ++)
+    {
+        vector<int> a = (getCustomers()[i]->order(menu));
+        if(a.size() == 2)
+        {
+            orderList.emplace_back(customersList[i]->getId(), menu[(a)[0]]);
+            if (isdigit(a[1]) == 0)
+                orderList.emplace_back(customersList[i]->getId(), menu[(a)[1]]);
+        } else
+        if(a[0] >=0)
+        {
+            orderList.emplace_back(customersList[i]->getId(), menu[(a)[0]]);
+        }
     }
-    return tableToClone;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
+std::vector<OrderPair>& Table::getOrders()
+{
+    return orderList;
+}
+void Table::openTable()
+{
+    open = true;
+}
+void Table::closeTable()
+{
+    open = false;
+}
+int Table::getBill()
+{
+    int sum=0;
+    for(unsigned int i = 0; i < ((orderList).size()); i ++)
+        sum+= orderList[i].second.getPrice();
+    return sum;
+}
+bool Table::isOpen()
+{
+    if(open == true)
+        return true;
+    return false;
+}

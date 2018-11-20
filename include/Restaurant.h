@@ -1,6 +1,5 @@
 #ifndef RESTAURANT_H_
 #define RESTAURANT_H_
-
 #include <vector>
 #include <string>
 #include "Dish.h"
@@ -8,36 +7,30 @@
 #include "Action.h"
 
 
-class Restaurant {
+class Restaurant{
 public:
-    Restaurant() = default;
+    Restaurant();
     Restaurant(const std::string &configFilePath);
+    Restaurant(const Restaurant& restaurant);
+    Restaurant & operator = (const Restaurant & restaurant);
+    Restaurant( Restaurant&& restaurant);
+    Restaurant & operator= ( Restaurant && restaurant);
+    ~Restaurant();
     void start();
+    void copy(const Restaurant& restaurant);
     int getNumOfTables() const;
     Table* getTable(int ind);
     const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
+    std::vector<Customer*> & customersResList(std::vector<std::string> data);
     std::vector<Dish>& getMenu();
-    ~Restaurant();
-    Restaurant& operator=(const Restaurant& other);
-    Restaurant(const Restaurant& other);
-    Restaurant(Restaurant&& other);
-    Restaurant& operator=(Restaurant&& other);
-
-
+//	bool backup;
+    bool isrestore = false;
 private:
-    bool open;
+    bool open = false;
     std::vector<Table*> tables;
     std::vector<Dish> menu;
     std::vector<BaseAction*> actionsLog;
-
-    const std::vector<std::string> parseInput(std::string& str);
-    void readFile(const std::string &configFilePath);
-    int parseLine(const std::string &currLine, int caseNumber);
-    DishType parseDishType(const std::string&);
-    void insertNewDish(const std::string&);
-    int openTable(std::vector<std::string>, int nextId);
-    void clearLogs();
-    void clearTables();
+    int cus_id = 0;
 };
 
 #endif

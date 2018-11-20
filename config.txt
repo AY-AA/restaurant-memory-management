@@ -1,10 +1,10 @@
 #number of tables
-4
+6
 #tables description
-8,8,8,8
+6,4,4,14,10,10
 #Menu
 Beer,ALC,50
-Water,BVG,55
-Soda,BVG,45
-Vodka,ALC,50
-Coca Cola,BVG,55
+Salad,VEG,40
+Water,BVG,10
+Wine,ALC,60
+Chili Con Carne,SPC,200

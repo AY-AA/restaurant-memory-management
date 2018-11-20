@@ -4,7 +4,6 @@
 #include <string>
 #include <iostream>
 #include "Customer.h"
-#include "Table.h"
 
 
 enum ActionStatus{
@@ -17,16 +16,20 @@ class Restaurant;
 class BaseAction{
 public:
     BaseAction();
+    BaseAction(const BaseAction & baseaction);
+    virtual ~ BaseAction() = default;
+    BaseAction & operator = (const BaseAction & bs);
     ActionStatus getStatus() const;
-    virtual void act(Restaurant& restaurant)=0;
-    virtual std::string toString() const=0;
-    virtual BaseAction* clone() = 0;
-    virtual ~BaseAction() = default;
-
+    void setStatus(ActionStatus sts) ;
+    void setErrorMsg(string ermsg) ;
+    virtual void act(Restaurant& restaurant) = 0;
+    virtual std::string toString() const = 0;
+    virtual BaseAction* clone() const = 0;
 protected:
     void complete();
     void error(std::string errorMsg);
     std::string getErrorMsg() const;
+    std::string getErrorMsg2() const;
 private:
     std::string errorMsg;
     ActionStatus status;
@@ -36,28 +39,29 @@ private:
 class OpenTable : public BaseAction {
 public:
     OpenTable(int id, std::vector<Customer *> &customersList);
+    OpenTable(const OpenTable & opentable);
+    virtual ~OpenTable() ;
+    OpenTable & operator = (const OpenTable & op);
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual OpenTable* clone();
-    virtual ~OpenTable() = default; // table is responsible of deleting customers
-    OpenTable(const OpenTable& other);
-    OpenTable(OpenTable&& other);
-    void setCustomers(const std::vector<Table*>& tables);
-
+    OpenTable* clone () const;
+    string input;
+    int typeAction=0;
 private:
     const int tableId;
     std::vector<Customer *> customers;
-    std::string _arguments;
 };
 
 
 class Order : public BaseAction {
 public:
     Order(int id);
+    Order(const Order & order);
+    virtual ~Order();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual Order* clone();
-    virtual ~Order() = default;
+    Order* clone () const;
+
 private:
     const int tableId;
 };
@@ -66,36 +70,41 @@ private:
 class MoveCustomer : public BaseAction {
 public:
     MoveCustomer(int src, int dst, int customerId);
+    MoveCustomer(const MoveCustomer & movecustomer);
+    virtual ~MoveCustomer();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual MoveCustomer* clone();
-    virtual ~MoveCustomer() = default;
+    MoveCustomer* clone () const;
+
 private:
     const int srcTable;
     const int dstTable;
     const int id;
 };
 
-
 class Close : public BaseAction {
 public:
     Close(int id);
+    Close(const Close & close);
+    virtual ~Close();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual Close* clone();
-    virtual ~Close() = default;
+    Close* clone () const;
+
 private:
     const int tableId;
 };
 
-
 class CloseAll : public BaseAction {
 public:
     CloseAll();
+    CloseAll(const CloseAll & closeall);
+    virtual ~CloseAll();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual CloseAll* clone();
-    virtual ~CloseAll() = default;
+    CloseAll* clone () const;
+
+//	void deletebackup();
 private:
 };
 
@@ -103,10 +112,13 @@ private:
 class PrintMenu : public BaseAction {
 public:
     PrintMenu();
+    PrintMenu(const PrintMenu & printmenu);
+    virtual ~PrintMenu();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual PrintMenu* clone();
-    virtual ~PrintMenu() = default;
+    PrintMenu* clone () const;
+
+
 private:
 };
 
@@ -114,10 +126,13 @@ private:
 class PrintTableStatus : public BaseAction {
 public:
     PrintTableStatus(int id);
+    PrintTableStatus(const PrintTableStatus & printtablestatus);
+    virtual ~PrintTableStatus();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual PrintTableStatus* clone();
-    virtual ~PrintTableStatus() = default;
+    PrintTableStatus* clone () const;
+
+
 private:
     const int tableId;
 };
@@ -126,12 +141,14 @@ private:
 class PrintActionsLog : public BaseAction {
 public:
     PrintActionsLog();
+    PrintActionsLog(const PrintActionsLog & printactionlog);
+    virtual ~PrintActionsLog();
     void act(Restaurant &restaurant);
     std::string toString() const;
-    virtual PrintActionsLog* clone();
-    virtual ~PrintActionsLog() = default;
-private:
+    PrintActionsLog* clone () const;
 
+
+private:
 };
 
 
@@ -139,9 +156,11 @@ class BackupRestaurant : public BaseAction {
 public:
     BackupRestaurant();
     void act(Restaurant &restaurant);
+    virtual ~BackupRestaurant();
     std::string toString() const;
-    virtual BackupRestaurant* clone();
-    virtual ~BackupRestaurant() = default;
+    BackupRestaurant* clone () const;
+
+
 private:
 };
 
@@ -150,9 +169,10 @@ class RestoreResturant : public BaseAction {
 public:
     RestoreResturant();
     void act(Restaurant &restaurant);
+    virtual ~RestoreResturant();
     std::string toString() const;
-    virtual RestoreResturant* clone();
-    virtual ~RestoreResturant() = default;
+    RestoreResturant* clone () const;
+
 };
 
 
