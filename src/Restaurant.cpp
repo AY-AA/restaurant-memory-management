@@ -288,10 +288,7 @@ void Restaurant::start()
         part_data = "";
         if(data[0].compare("open") == 0)
         {
-            std::vector<Customer*> tmpCus = customersResList(data);
-            OpenTable *open_table = new OpenTable(stoi(data[1]),tmpCus);
-            open_table->act(*this);
-            this->actionsLog.push_back(open_table);
+            openTable(data[1],data);
         }
         if(data[0].compare("order") == 0)
         {
@@ -353,9 +350,10 @@ void Restaurant::start()
     this->actionsLog.push_back(closeall);
 }
 
-vector<Customer*> & Restaurant::customersResList(vector<string> data)
+void Restaurant::openTable(std::string id,vector<string> data)
 {
     std::vector<Customer*> vc ;
+
     for(unsigned int i = 2 ; i < data.size() ; i+= 2)
     {
         if(data[i+1].compare("chp") == 0) {
@@ -381,5 +379,8 @@ vector<Customer*> & Restaurant::customersResList(vector<string> data)
 
         }
     }
-    return vc;
+
+    OpenTable *open_table = new OpenTable(stoi(data[1]),vc);
+    open_table->act(*this);
+    this->actionsLog.push_back(open_table);
 }

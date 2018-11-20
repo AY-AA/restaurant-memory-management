@@ -21,7 +21,7 @@ public:
     int getNumOfTables() const;
     Table* getTable(int ind);
     const std::vector<BaseAction*>& getActionsLog() const; // Return a reference to the history of actions
-    std::vector<Customer*> & customersResList(std::vector<std::string> data);
+    void openTable(std::string id , std::vector<std::string> data);
     std::vector<Dish>& getMenu();
 //	bool backup;
     bool isrestore = false;

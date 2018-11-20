@@ -86,6 +86,7 @@ void OpenTable::act(Restaurant &restaurant)
         {
             delete(customers[i]);
         }
+        customers.clear();
         error(" Table does not exist or is already open");
         cout << "Error: Table does not exist or is already open" << endl;
     }
