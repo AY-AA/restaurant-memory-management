@@ -6,12 +6,6 @@ using namespace std;
 Restaurant* backup = nullptr;
 
 int main(int argc, char** argv){
-
-//    string configurationFile = "../config.txt";
-//    Restaurant rest(configurationFile);
-//    rest.start();
-
-
     if(argc!=2){
         std::cout << "usage: rest <config_path>" << std::endl;
         return 0;
